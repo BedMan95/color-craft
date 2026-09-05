@@ -114,6 +114,9 @@ export class WebGLRenderer {
       splitBalance: gl.getUniformLocation(p, 'u_splitBalance'),
       skinSmooth: gl.getUniformLocation(p, 'u_skinSmooth'),
       glow: gl.getUniformLocation(p, 'u_glow'),
+      bokehBlur: gl.getUniformLocation(p, 'u_bokehBlur'),
+      bokehCenter: gl.getUniformLocation(p, 'u_bokehCenter'),
+      bokehRadius: gl.getUniformLocation(p, 'u_bokehRadius'),
       curve: gl.getUniformLocation(p, 'u_curve'),
     };
   }
@@ -216,6 +219,15 @@ export class WebGLRenderer {
     // Meitu Skin Smoothing & Glow
     gl.uniform1f(this.uniforms.skinSmooth, params.skinSmooth || 0);
     gl.uniform1f(this.uniforms.glow, params.glow || 0);
+
+    // Portrait Bokeh Depth Blur
+    gl.uniform1f(this.uniforms.bokehBlur, params.bokehBlur || 0);
+    gl.uniform2f(
+      this.uniforms.bokehCenter,
+      (params.bokehX ?? 50) * 0.01,
+      1.0 - (params.bokehY ?? 50) * 0.01
+    );
+    gl.uniform1f(this.uniforms.bokehRadius, (params.bokehRadius ?? 45) * 0.01);
 
     // Parametric Tone Curve
     gl.uniform4f(

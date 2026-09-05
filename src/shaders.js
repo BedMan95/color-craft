@@ -64,6 +64,11 @@ uniform float u_splitBalance;  // -100 to 100
 uniform float u_skinSmooth;    // 0 to 100
 uniform float u_glow;          // 0 to 100
 
+// Portrait Bokeh Depth Blur (Lens simulation)
+uniform float u_bokehBlur;     // 0 to 100
+uniform vec2 u_bokehCenter;    // [0..1] normalized focus center
+uniform float u_bokehRadius;   // focus zone radius [0.05..1.0]
+
 // Tone Curve (Parametric 4-point spline: blacks, shadows, highlights, whites)
 uniform vec4 u_curve;          // vec4(blacks, shadows, highlights, whites) in [-100..100]
 
@@ -202,6 +207,27 @@ void main() {
     if (u_glow > 0.0) {
       vec3 brightBlur = max(vec3(0.0), blur - 0.35);
       color = mix(color, color + brightBlur * 0.9, u_glow * 0.01);
+    }
+
+    // Portrait Bokeh Depth Blur (Simulated lens depth of field)
+    if (u_bokehBlur > 0.0) {
+      float distToCenter = distance(v_texCoord, u_bokehCenter);
+      float blurMask = smoothstep(u_bokehRadius * 0.4, u_bokehRadius, distToCenter);
+      
+      // Wide bokeh circle 8-tap disc sampling for smooth aperture blur
+      vec2 bOffset = u_texelSize * (u_bokehBlur * 0.08);
+      vec3 bokehAcc = blur;
+      bokehAcc += texture(u_image, v_texCoord + vec2( bOffset.x,  0.0)).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2(-bOffset.x,  0.0)).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2( 0.0,  bOffset.y)).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2( 0.0, -bOffset.y)).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2( bOffset.x,  bOffset.y) * 0.707).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2(-bOffset.x,  bOffset.y) * 0.707).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2( bOffset.x, -bOffset.y) * 0.707).rgb;
+      bokehAcc += texture(u_image, v_texCoord + vec2(-bOffset.x, -bOffset.y) * 0.707).rgb;
+      vec3 bokehColor = bokehAcc / 9.0;
+
+      color = mix(color, bokehColor, blurMask * (u_bokehBlur * 0.01));
     }
   }
 

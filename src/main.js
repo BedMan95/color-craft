@@ -354,7 +354,7 @@ const SLIDERS = [
   'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
   'texture', 'clarity', 'dehaze',
   'splitShadowHue', 'splitShadowSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
-  'skinSmooth', 'glow',
+  'skinSmooth', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
   'curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites',
   'vignette', 'grain'
 ];
@@ -501,6 +501,10 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
     } else if (target === 'beauty') {
       state.params.skinSmooth = 0;
       state.params.glow = 0;
+      state.params.bokehBlur = 0;
+      state.params.bokehRadius = 45;
+      state.params.bokehX = 50;
+      state.params.bokehY = 50;
     } else if (target === 'effects') {
       state.params.vignette = 0;
       state.params.grain = 0;
