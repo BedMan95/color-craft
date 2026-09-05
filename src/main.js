@@ -581,6 +581,20 @@ window.addEventListener('pointerup', (e) => {
 const btnBottomHsl = document.getElementById('btn-bottom-hsl');
 const btnHoldCompare = document.getElementById('btn-hold-compare');
 
+function updateCanvasShift(sheetHeight = null) {
+  if (window.innerWidth > 768) {
+    canvas.style.transform = '';
+    return;
+  }
+  if (!state.isSheetOpen) {
+    canvas.style.transform = '';
+    return;
+  }
+  const h = sheetHeight !== null ? sheetHeight : (sidebar.getBoundingClientRect().height || window.innerHeight * 0.52);
+  const shiftY = Math.round((h - 120) * 0.48);
+  canvas.style.transform = `translateY(-${Math.max(0, shiftY)}px)`;
+}
+
 function openSheet(focusSection = null) {
   sidebar.classList.add('open');
   sheetBackdrop.classList.add('active');
@@ -589,6 +603,8 @@ function openSheet(focusSection = null) {
   btnBottomPresets?.classList.remove('active');
   btnBottomAdjust?.classList.remove('active');
   btnBottomHsl?.classList.remove('active');
+
+  updateCanvasShift();
 
   const sheetScrollEl = sidebar.querySelector('.sheet-scroll');
   const presetSec = sidebar.querySelector('.sheet-section');
@@ -615,6 +631,7 @@ function closeSheet() {
   btnBottomAdjust?.classList.remove('active');
   btnBottomPresets?.classList.remove('active');
   btnBottomHsl?.classList.remove('active');
+  canvas.style.transform = '';
 }
 
 btnBottomAdjust?.addEventListener('click', () => {
@@ -951,6 +968,7 @@ if (sheetHandle && sidebar) {
     const nextH = Math.max(minH, Math.min(maxH, startHeight + dy));
     sidebar.style.height = `${nextH}px`;
     sidebar.style.maxHeight = `${nextH}px`;
+    updateCanvasShift(nextH);
   });
 
   const stopSheetDrag = (e) => {
@@ -965,6 +983,8 @@ if (sheetHandle && sidebar) {
         closeSheet();
         sidebar.style.height = '';
         sidebar.style.maxHeight = '';
+      } else {
+        updateCanvasShift(curH);
       }
     }
   };
