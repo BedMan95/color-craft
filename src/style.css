@@ -1052,7 +1052,7 @@ body {
   }
 
   .workspace {
-    padding-bottom: calc(var(--bottom-bar-h) + 94px);
+    padding-bottom: calc(var(--bottom-bar-h) + 120px);
   }
 
   .viewport-area {
@@ -1067,20 +1067,33 @@ body {
     bottom: var(--bottom-bar-h);
     left: 0;
     right: 0;
-    height: 94px;
-    background: rgba(18, 18, 22, 0.85);
+    height: 120px;
+    background: rgba(18, 18, 22, 0.9);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid hsl(var(--border) / 0.7);
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    padding: 0 10px;
     z-index: 28;
   }
   .mobile-preset-shelf .preset-pill-list {
     padding: 0;
     margin: 0;
     width: 100%;
+    gap: 12px;
+  }
+  .mobile-preset-shelf .preset-card {
+    width: 82px;
+  }
+  .mobile-preset-shelf .preset-thumb-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 14px;
+  }
+  .mobile-preset-shelf .preset-thumb-name {
+    font-size: 11px;
+    font-weight: 500;
   }
 
   /* Bottom Sheet Drawer for Mobile */

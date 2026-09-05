@@ -371,8 +371,8 @@ function getThumbBaseCanvas() {
   if (!state.renderer.currentImage) return null;
   if (!thumbBaseCanvas) {
     thumbBaseCanvas = document.createElement('canvas');
-    thumbBaseCanvas.width = 96;
-    thumbBaseCanvas.height = 96;
+    thumbBaseCanvas.width = 160;
+    thumbBaseCanvas.height = 160;
   }
   const ctx = thumbBaseCanvas.getContext('2d');
   const img = state.renderer.currentImage;
@@ -381,7 +381,7 @@ function getThumbBaseCanvas() {
   const minDim = Math.min(iw, ih);
   const sx = (iw - minDim) / 2;
   const sy = (ih - minDim) / 2;
-  ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, 96, 96);
+  ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, 160, 160);
   return thumbBaseCanvas;
 }
 
@@ -394,15 +394,15 @@ function renderPresetThumbnail(preset) {
 
   if (!thumbOffscreenRenderer) {
     const off = document.createElement('canvas');
-    off.width = 96;
-    off.height = 96;
+    off.width = 160;
+    off.height = 160;
     thumbOffscreenRenderer = new WebGLRenderer(off);
   }
 
   thumbOffscreenRenderer.setImage(base);
   thumbOffscreenRenderer.setSplitPosition(-1.0);
   thumbOffscreenRenderer.render(preset.params);
-  const dataUrl = thumbOffscreenRenderer.canvas.toDataURL('image/jpeg', 0.8);
+  const dataUrl = thumbOffscreenRenderer.canvas.toDataURL('image/jpeg', 0.85);
   presetThumbnailCache.set(preset.id, dataUrl);
   return dataUrl;
 }
