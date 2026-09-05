@@ -22,10 +22,19 @@ export const DEFAULT_PARAMS = {
   // Linear Masking
   maskAngle: 0,
   maskPosition: 0.5,
-  maskFeather: 0.4,
+  maskFeather: 40,
   maskExposure: 0,
   maskWarmth: 0,
   maskInvert: 0,
+  // Radial Elliptical Mask
+  radialMaskX: 50,
+  radialMaskY: 50,
+  radialMaskRx: 35,
+  radialMaskRy: 35,
+  radialMaskFeather: 50,
+  radialMaskExposure: 0,
+  radialMaskWarmth: 0,
+  radialMaskInvert: 0,
   // Detail, Clarity & Sharpening
   texture: 0,
   clarity: 0,

@@ -463,6 +463,69 @@
             </div>
           </div>
 
+          <!-- Radial Mask (Lightroom Subject Accent) -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Radial Ellipse Mask</span>
+              <button class="btn-reset-sec" data-target="radialMask" title="Reset Radial Mask">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Exposure</span>
+                  <span class="slider-val" id="val-radialMaskExposure">0</span>
+                </div>
+                <input type="range" id="param-radialMaskExposure" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Temperature</span>
+                  <span class="slider-val" id="val-radialMaskWarmth">0</span>
+                </div>
+                <input type="range" id="param-radialMaskWarmth" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Center X</span>
+                  <span class="slider-val" id="val-radialMaskX">50</span>
+                </div>
+                <input type="range" id="param-radialMaskX" min="0" max="100" value="50" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Center Y</span>
+                  <span class="slider-val" id="val-radialMaskY">50</span>
+                </div>
+                <input type="range" id="param-radialMaskY" min="0" max="100" value="50" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Width (Radius X)</span>
+                  <span class="slider-val" id="val-radialMaskRx">35</span>
+                </div>
+                <input type="range" id="param-radialMaskRx" min="5" max="100" value="35" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Height (Radius Y)</span>
+                  <span class="slider-val" id="val-radialMaskRy">35</span>
+                </div>
+                <input type="range" id="param-radialMaskRy" min="5" max="100" value="35" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Feather</span>
+                  <span class="slider-val" id="val-radialMaskFeather">50</span>
+                </div>
+                <input type="range" id="param-radialMaskFeather" min="5" max="100" value="50" class="shad-slider" />
+              </div>
+              <div class="flex items-center justify-between py-1">
+                <span class="slider-name">Invert Radial (Outer)</span>
+                <input type="checkbox" id="param-radialMaskInvert" class="shad-checkbox" />
+              </div>
+            </div>
+          </div>
+
           <!-- Clarity, Texture & Dehaze (Lightroom Detail) -->
           <div class="accordion-item">
             <div class="accordion-trigger">

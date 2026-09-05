@@ -352,6 +352,7 @@ const SLIDERS = [
   'vibrance', 'saturation',
   'lightIntensity', 'lightWarmth', 'lightRadius', 'lightX', 'lightY',
   'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
+  'radialMaskExposure', 'radialMaskWarmth', 'radialMaskX', 'radialMaskY', 'radialMaskRx', 'radialMaskRy', 'radialMaskFeather',
   'texture', 'clarity', 'dehaze', 'sharpen', 'noiseReduction',
   'splitShadowHue', 'splitShadowSat', 'splitMidtoneHue', 'splitMidtoneSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
   'skinSmooth', 'skinTone', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
@@ -419,6 +420,14 @@ function bindSliders() {
     });
   }
 
+  const radialMaskInvertChk = document.getElementById('param-radialMaskInvert');
+  if (radialMaskInvertChk) {
+    radialMaskInvertChk.addEventListener('change', (e) => {
+      state.params.radialMaskInvert = e.target.checked ? 1 : 0;
+      scheduleRender();
+    });
+  }
+
   // HSL Tab triggers
   const tabs = document.querySelectorAll('.tab-trigger');
   tabs.forEach(tab => {
@@ -457,6 +466,10 @@ function syncAllInputs() {
     }
   });
   syncHslInputs();
+  const chkLin = document.getElementById('param-maskInvert');
+  if (chkLin) chkLin.checked = !!state.params.maskInvert;
+  const chkRad = document.getElementById('param-radialMaskInvert');
+  if (chkRad) chkRad.checked = !!state.params.radialMaskInvert;
 }
 
 // Reset section
@@ -487,6 +500,17 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.maskFeather = 40;
       state.params.maskInvert = 0;
       const chk = document.getElementById('param-maskInvert');
+      if (chk) chk.checked = false;
+    } else if (target === 'radialMask') {
+      state.params.radialMaskExposure = 0;
+      state.params.radialMaskWarmth = 0;
+      state.params.radialMaskX = 50;
+      state.params.radialMaskY = 50;
+      state.params.radialMaskRx = 35;
+      state.params.radialMaskRy = 35;
+      state.params.radialMaskFeather = 50;
+      state.params.radialMaskInvert = 0;
+      const chk = document.getElementById('param-radialMaskInvert');
       if (chk) chk.checked = false;
     } else if (target === 'detail') {
       state.params.texture = 0;

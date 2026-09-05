@@ -49,6 +49,14 @@ uniform float u_maskExposure;  // -100 to 100
 uniform float u_maskWarmth;    // -100 to 100
 uniform float u_maskInvert;    // 0 or 1
 
+// Radial Masking Uniforms (Subject Pop & Vignette Mask)
+uniform vec2 u_radialMaskCenter;   // [0..1] normalized center
+uniform vec2 u_radialMaskRadius;   // (rx, ry) normalized radii
+uniform float u_radialMaskFeather; // feather range [0.01..1.0]
+uniform float u_radialMaskExposure;// -100 to 100
+uniform float u_radialMaskWarmth;  // -100 to 100
+uniform float u_radialMaskInvert;  // 0 or 1 (invert: inner vs outer mask)
+
 // Clarity, Texture & Dehaze
 uniform float u_clarity;       // -100 to 100
 uniform float u_texture;       // -100 to 100
@@ -359,6 +367,21 @@ void main() {
     float mw = u_maskWarmth * 0.01 * maskFactor;
     color.r += mw * 0.15;
     color.b -= mw * 0.15;
+  }
+
+  // 10b. Radial Elliptical Mask (Lightroom Subject Accent)
+  if (abs(u_radialMaskExposure) > 0.01 || abs(u_radialMaskWarmth) > 0.01) {
+    vec2 normDiff = (v_texCoord - u_radialMaskCenter) / max(vec2(0.001), u_radialMaskRadius);
+    float radialDist = length(normDiff);
+    float rFeather = max(0.01, u_radialMaskFeather);
+    float radialFactor = 1.0 - smoothstep(1.0 - rFeather, 1.0, radialDist);
+    if (u_radialMaskInvert > 0.5) {
+      radialFactor = 1.0 - radialFactor;
+    }
+    color += color * (u_radialMaskExposure * 0.01) * radialFactor;
+    float rmw = u_radialMaskWarmth * 0.01 * radialFactor;
+    color.r += rmw * 0.15;
+    color.b -= rmw * 0.15;
   }
 
   // 11. Film Grain

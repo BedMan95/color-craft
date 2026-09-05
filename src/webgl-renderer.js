@@ -105,6 +105,12 @@ export class WebGLRenderer {
       maskExposure: gl.getUniformLocation(p, 'u_maskExposure'),
       maskWarmth: gl.getUniformLocation(p, 'u_maskWarmth'),
       maskInvert: gl.getUniformLocation(p, 'u_maskInvert'),
+      radialMaskCenter: gl.getUniformLocation(p, 'u_radialMaskCenter'),
+      radialMaskRadius: gl.getUniformLocation(p, 'u_radialMaskRadius'),
+      radialMaskFeather: gl.getUniformLocation(p, 'u_radialMaskFeather'),
+      radialMaskExposure: gl.getUniformLocation(p, 'u_radialMaskExposure'),
+      radialMaskWarmth: gl.getUniformLocation(p, 'u_radialMaskWarmth'),
+      radialMaskInvert: gl.getUniformLocation(p, 'u_radialMaskInvert'),
       clarity: gl.getUniformLocation(p, 'u_clarity'),
       texture: gl.getUniformLocation(p, 'u_texture'),
       dehaze: gl.getUniformLocation(p, 'u_dehaze'),
@@ -196,6 +202,22 @@ export class WebGLRenderer {
     gl.uniform1f(this.uniforms.maskExposure, params.maskExposure || 0);
     gl.uniform1f(this.uniforms.maskWarmth, params.maskWarmth || 0);
     gl.uniform1f(this.uniforms.maskInvert, params.maskInvert ? 1.0 : 0.0);
+
+    // Radial Elliptical Mask
+    gl.uniform2f(
+      this.uniforms.radialMaskCenter,
+      (params.radialMaskX ?? 50) * 0.01,
+      1.0 - (params.radialMaskY ?? 50) * 0.01
+    );
+    gl.uniform2f(
+      this.uniforms.radialMaskRadius,
+      (params.radialMaskRx ?? 35) * 0.01,
+      (params.radialMaskRy ?? 35) * 0.01
+    );
+    gl.uniform1f(this.uniforms.radialMaskFeather, (params.radialMaskFeather ?? 50) * 0.01);
+    gl.uniform1f(this.uniforms.radialMaskExposure, params.radialMaskExposure || 0);
+    gl.uniform1f(this.uniforms.radialMaskWarmth, params.radialMaskWarmth || 0);
+    gl.uniform1f(this.uniforms.radialMaskInvert, params.radialMaskInvert ? 1.0 : 0.0);
 
     // Texture, Clarity & Dehaze, Sharpening & Noise Reduction
     gl.uniform1f(this.uniforms.clarity, params.clarity || 0);
