@@ -248,6 +248,8 @@ const SLIDERS = [
   'temp', 'tint',
   'exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks',
   'vibrance', 'saturation',
+  'lightIntensity', 'lightWarmth', 'lightRadius', 'lightX', 'lightY',
+  'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
   'vignette', 'grain'
 ];
 
@@ -302,6 +304,15 @@ function bindSliders() {
     });
   });
 
+  // Mask invert checkbox
+  const maskInvertChk = document.getElementById('param-maskInvert');
+  if (maskInvertChk) {
+    maskInvertChk.addEventListener('change', (e) => {
+      state.params.maskInvert = e.target.checked ? 1 : 0;
+      scheduleRender();
+    });
+  }
+
   // HSL Tab triggers
   const tabs = document.querySelectorAll('.tab-trigger');
   tabs.forEach(tab => {
@@ -354,6 +365,21 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
     } else if (target === 'presence') {
       state.params.vibrance = 0;
       state.params.saturation = 0;
+    } else if (target === 'lighting') {
+      state.params.lightIntensity = 0;
+      state.params.lightWarmth = 0;
+      state.params.lightRadius = 60;
+      state.params.lightX = 50;
+      state.params.lightY = 50;
+    } else if (target === 'mask') {
+      state.params.maskExposure = 0;
+      state.params.maskWarmth = 0;
+      state.params.maskAngle = 0;
+      state.params.maskPosition = 50;
+      state.params.maskFeather = 40;
+      state.params.maskInvert = 0;
+      const chk = document.getElementById('param-maskInvert');
+      if (chk) chk.checked = false;
     } else if (target === 'effects') {
       state.params.vignette = 0;
       state.params.grain = 0;

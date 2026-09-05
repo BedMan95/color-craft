@@ -95,6 +95,16 @@ export class WebGLRenderer {
       vignette: gl.getUniformLocation(p, 'u_vignette'),
       grain: gl.getUniformLocation(p, 'u_grain'),
       hsl: gl.getUniformLocation(p, 'u_hsl[0]'),
+      lightPos: gl.getUniformLocation(p, 'u_lightPos'),
+      lightRadius: gl.getUniformLocation(p, 'u_lightRadius'),
+      lightIntensity: gl.getUniformLocation(p, 'u_lightIntensity'),
+      lightWarmth: gl.getUniformLocation(p, 'u_lightWarmth'),
+      maskAngle: gl.getUniformLocation(p, 'u_maskAngle'),
+      maskPosition: gl.getUniformLocation(p, 'u_maskPosition'),
+      maskFeather: gl.getUniformLocation(p, 'u_maskFeather'),
+      maskExposure: gl.getUniformLocation(p, 'u_maskExposure'),
+      maskWarmth: gl.getUniformLocation(p, 'u_maskWarmth'),
+      maskInvert: gl.getUniformLocation(p, 'u_maskInvert'),
     };
   }
 
@@ -149,6 +159,26 @@ export class WebGLRenderer {
     gl.uniform1f(this.uniforms.saturation, params.saturation);
     gl.uniform1f(this.uniforms.vignette, params.vignette);
     gl.uniform1f(this.uniforms.grain, params.grain);
+
+    // Relight / Lighting
+    const lx = (params.lightX !== undefined ? params.lightX : 50) / 100.0;
+    const ly = (params.lightY !== undefined ? params.lightY : 50) / 100.0;
+    const lRadius = (params.lightRadius !== undefined ? params.lightRadius : 60) / 100.0;
+    gl.uniform2f(this.uniforms.lightPos, lx, ly);
+    gl.uniform1f(this.uniforms.lightRadius, lRadius);
+    gl.uniform1f(this.uniforms.lightIntensity, params.lightIntensity || 0);
+    gl.uniform1f(this.uniforms.lightWarmth, params.lightWarmth || 0);
+
+    // Linear Gradient Mask
+    const angleRad = ((params.maskAngle || 0) * Math.PI) / 180;
+    const mPos = (params.maskPosition !== undefined ? params.maskPosition : 50) / 100.0;
+    const mFeather = (params.maskFeather !== undefined ? params.maskFeather : 40) / 100.0;
+    gl.uniform1f(this.uniforms.maskAngle, angleRad);
+    gl.uniform1f(this.uniforms.maskPosition, mPos);
+    gl.uniform1f(this.uniforms.maskFeather, mFeather);
+    gl.uniform1f(this.uniforms.maskExposure, params.maskExposure || 0);
+    gl.uniform1f(this.uniforms.maskWarmth, params.maskWarmth || 0);
+    gl.uniform1f(this.uniforms.maskInvert, params.maskInvert ? 1.0 : 0.0);
 
     // HSL Bands: array of 7 vec3
     // red, orange, yellow, green, cyan, blue, magenta

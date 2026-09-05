@@ -278,6 +278,100 @@
             </div>
           </div>
 
+          <!-- Relight / Studio Lighting -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Studio Lighting & Relight</span>
+              <button class="btn-reset-sec" data-target="lighting" title="Reset Lighting">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Light Intensity</span>
+                  <span class="slider-val" id="val-lightIntensity">0</span>
+                </div>
+                <input type="range" id="param-lightIntensity" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Warmth Glow</span>
+                  <span class="slider-val" id="val-lightWarmth">0</span>
+                </div>
+                <input type="range" id="param-lightWarmth" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Radius Spread</span>
+                  <span class="slider-val" id="val-lightRadius">60</span>
+                </div>
+                <input type="range" id="param-lightRadius" min="10" max="150" value="60" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Light X Position</span>
+                  <span class="slider-val" id="val-lightX">50</span>
+                </div>
+                <input type="range" id="param-lightX" min="0" max="100" value="50" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Light Y Position</span>
+                  <span class="slider-val" id="val-lightY">50</span>
+                </div>
+                <input type="range" id="param-lightY" min="0" max="100" value="50" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Gradient Masking -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Linear Gradient Mask</span>
+              <button class="btn-reset-sec" data-target="mask" title="Reset Mask">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Mask Exposure</span>
+                  <span class="slider-val" id="val-maskExposure">0</span>
+                </div>
+                <input type="range" id="param-maskExposure" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Mask Temperature</span>
+                  <span class="slider-val" id="val-maskWarmth">0</span>
+                </div>
+                <input type="range" id="param-maskWarmth" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Mask Angle (°)</span>
+                  <span class="slider-val" id="val-maskAngle">0</span>
+                </div>
+                <input type="range" id="param-maskAngle" min="0" max="360" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Position</span>
+                  <span class="slider-val" id="val-maskPosition">50</span>
+                </div>
+                <input type="range" id="param-maskPosition" min="0" max="100" value="50" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Feather</span>
+                  <span class="slider-val" id="val-maskFeather">40</span>
+                </div>
+                <input type="range" id="param-maskFeather" min="5" max="100" value="40" class="shad-slider" />
+              </div>
+              <div class="flex items-center justify-between py-1">
+                <span class="slider-name">Invert Mask</span>
+                <input type="checkbox" id="param-maskInvert" class="shad-checkbox" />
+              </div>
+            </div>
+          </div>
+
           <!-- Effects -->
           <div class="accordion-item">
             <div class="accordion-trigger">

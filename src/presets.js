@@ -13,6 +13,19 @@ export const DEFAULT_PARAMS = {
   saturation: 0,
   vignette: 0,
   grain: 0,
+  // Relight & Lighting
+  lightX: 0.5,
+  lightY: 0.5,
+  lightRadius: 0.6,
+  lightIntensity: 0,
+  lightWarmth: 0,
+  // Linear Masking
+  maskAngle: 0,
+  maskPosition: 0.5,
+  maskFeather: 0.4,
+  maskExposure: 0,
+  maskWarmth: 0,
+  maskInvert: 0,
   hsl: {
     red: { hue: 0, sat: 0, lum: 0 },
     orange: { hue: 0, sat: 0, lum: 0 },

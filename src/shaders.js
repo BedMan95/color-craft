@@ -21,7 +21,7 @@ uniform sampler2D u_image;
 uniform float u_splitPos;     // [0..1], <0 disables split
 uniform bool u_showOriginal;
 
-// Tone & WB Uniforms
+// Tone, WB & Lighting Uniforms
 uniform float u_exposure;    // -100 to 100
 uniform float u_contrast;    // -100 to 100
 uniform float u_highlights;  // -100 to 100
@@ -34,6 +34,20 @@ uniform float u_vibrance;    // -100 to 100
 uniform float u_saturation;  // -100 to 100
 uniform float u_vignette;    // 0 to 100
 uniform float u_grain;       // 0 to 100
+
+// Lighting & Relight Uniforms
+uniform vec2 u_lightPos;       // [0..1], normalized light origin
+uniform float u_lightRadius;   // 0.1 to 1.5
+uniform float u_lightIntensity;// -100 to 100
+uniform float u_lightWarmth;   // -100 to 100 (cool to warm glow)
+
+// Linear Masking Uniforms
+uniform float u_maskAngle;     // gradient angle in radians
+uniform float u_maskPosition;  // position along normal [0..1]
+uniform float u_maskFeather;   // feather range [0.01..1.0]
+uniform float u_maskExposure;  // -100 to 100
+uniform float u_maskWarmth;    // -100 to 100
+uniform float u_maskInvert;    // 0 or 1
 
 // HSL Per-band adjustments: vec3(hueShift, satShift, lumShift)
 uniform vec3 u_hsl[7];
@@ -172,7 +186,35 @@ void main() {
     color *= (1.0 - vig * (u_vignette * 0.01));
   }
 
-  // 9. Film Grain
+  // 9. Relight / Radial Light Source
+  if (abs(u_lightIntensity) > 0.01) {
+    float lightDist = distance(v_texCoord, u_lightPos);
+    float lightFalloff = smoothstep(u_lightRadius, 0.0, lightDist);
+    float lightGain = (u_lightIntensity * 0.01) * lightFalloff;
+    color += color * lightGain;
+
+    // Warmth / Cool glow tint
+    float lw = u_lightWarmth * 0.01 * lightFalloff;
+    color.r += lw * 0.2;
+    color.b -= lw * 0.2;
+  }
+
+  // 10. Gradient Linear Mask
+  if (abs(u_maskExposure) > 0.01 || abs(u_maskWarmth) > 0.01) {
+    vec2 dir = vec2(cos(u_maskAngle), sin(u_maskAngle));
+    float proj = dot(v_texCoord - vec2(0.5), dir) + 0.5;
+    float featherHalf = max(0.01, u_maskFeather * 0.5);
+    float maskFactor = smoothstep(u_maskPosition - featherHalf, u_maskPosition + featherHalf, proj);
+    if (u_maskInvert > 0.5) {
+      maskFactor = 1.0 - maskFactor;
+    }
+    color += color * (u_maskExposure * 0.01) * maskFactor;
+    float mw = u_maskWarmth * 0.01 * maskFactor;
+    color.r += mw * 0.15;
+    color.b -= mw * 0.15;
+  }
+
+  // 11. Film Grain
   if (u_grain > 0.0) {
     float noise = (rand(v_texCoord) - 0.5) * (u_grain * 0.002);
     color += noise;
