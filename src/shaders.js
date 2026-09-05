@@ -64,6 +64,9 @@ uniform float u_splitBalance;  // -100 to 100
 uniform float u_skinSmooth;    // 0 to 100
 uniform float u_glow;          // 0 to 100
 
+// Tone Curve (Parametric 4-point spline: blacks, shadows, highlights, whites)
+uniform vec4 u_curve;          // vec4(blacks, shadows, highlights, whites) in [-100..100]
+
 // HSL Per-band adjustments: vec3(hueShift, satShift, lumShift)
 uniform vec3 u_hsl[7];
 
@@ -200,6 +203,21 @@ void main() {
       vec3 brightBlur = max(vec3(0.0), blur - 0.35);
       color = mix(color, color + brightBlur * 0.9, u_glow * 0.01);
     }
+  }
+
+  // 5d. Tone Curve Spline (Parametric Lightroom 4-band: blacks, shadows, highlights, whites)
+  if (length(u_curve) > 0.01) {
+    float clum = clamp(dot(color, vec3(0.2126, 0.7152, 0.0722)), 0.0, 1.0);
+    float wBlacks = max(0.0, 1.0 - clum * 4.0);
+    float wShadows = smoothstep(0.0, 0.35, clum) * (1.0 - smoothstep(0.35, 0.65, clum));
+    float wHighlights = smoothstep(0.35, 0.65, clum) * (1.0 - smoothstep(0.65, 1.0, clum));
+    float wWhites = smoothstep(0.65, 1.0, clum);
+
+    float curveDelta = (u_curve.x * 0.003 * wBlacks) +
+                       (u_curve.y * 0.003 * wShadows) +
+                       (u_curve.z * 0.003 * wHighlights) +
+                       (u_curve.w * 0.003 * wWhites);
+    color += vec3(curveDelta);
   }
 
   // IMPORTANT: Clamp color to [0..1] before HSL conversion.

@@ -39,6 +39,11 @@ export const DEFAULT_PARAMS = {
   // Meitu Beauty & Glow
   skinSmooth: 0,
   glow: 0,
+  // Parametric Tone Curve
+  curveBlacks: 0,
+  curveShadows: 0,
+  curveHighlights: 0,
+  curveWhites: 0,
   hsl: {
     red: { hue: 0, sat: 0, lum: 0 },
     orange: { hue: 0, sat: 0, lum: 0 },

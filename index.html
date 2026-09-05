@@ -211,6 +211,47 @@
             </div>
           </div>
 
+          <!-- Tone Curve -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Tone Curve</span>
+              <button class="btn-reset-sec" data-target="curve" title="Reset Curve">Reset</button>
+            </div>
+            <div class="curve-visual-box">
+              <canvas id="curve-canvas" width="220" height="110" class="curve-canvas-display"></canvas>
+            </div>
+            <div class="control-list mt-3">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Whites</span>
+                  <span class="slider-val" id="val-curveWhites">0</span>
+                </div>
+                <input type="range" id="param-curveWhites" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Highlights</span>
+                  <span class="slider-val" id="val-curveHighlights">0</span>
+                </div>
+                <input type="range" id="param-curveHighlights" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Shadows</span>
+                  <span class="slider-val" id="val-curveShadows">0</span>
+                </div>
+                <input type="range" id="param-curveShadows" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Blacks</span>
+                  <span class="slider-val" id="val-curveBlacks">0</span>
+                </div>
+                <input type="range" id="param-curveBlacks" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
           <!-- Tone -->
           <div class="accordion-item">
             <div class="accordion-trigger">

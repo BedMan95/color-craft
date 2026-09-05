@@ -723,6 +723,23 @@ body {
   border-radius: calc(var(--radius) - 2px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* Tone Curve Visual Canvas */
+.curve-visual-box {
+  width: 100%;
+  background: #08080a;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+}
+.curve-canvas-display {
+  width: 100%;
+  max-width: 220px;
+  height: 110px;
+  display: block;
+}
 .sheet-scroll::-webkit-scrollbar {
   width: 8px;
 }

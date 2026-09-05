@@ -355,6 +355,7 @@ const SLIDERS = [
   'texture', 'clarity', 'dehaze',
   'splitShadowHue', 'splitShadowSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
   'skinSmooth', 'glow',
+  'curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites',
   'vignette', 'grain'
 ];
 
@@ -467,6 +468,8 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.tint = 0;
     } else if (target === 'tone') {
       ['exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks'].forEach(k => state.params[k] = 0);
+    } else if (target === 'curve') {
+      ['curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites'].forEach(k => state.params[k] = 0);
     } else if (target === 'presence') {
       state.params.vibrance = 0;
       state.params.saturation = 0;
@@ -1358,7 +1361,90 @@ if (sheetHandle && sidebar) {
   sheetHandle.addEventListener('pointercancel', stopSheetDrag);
 }
 
+// Tone Curve Graph Renderer
+const curveCanvas = document.getElementById('curve-canvas');
+function renderCurveVisual() {
+  if (!curveCanvas) return;
+  const ctx = curveCanvas.getContext('2d');
+  const w = curveCanvas.width;
+  const h = curveCanvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background Grid (3x3)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const x = (w / 4) * i;
+    const y = (h / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  // Base Diagonal Reference
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  ctx.lineTo(w, 0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Plot Curve Spline
+  const blacks = (state.params.curveBlacks || 0) * 0.003;
+  const shadows = (state.params.curveShadows || 0) * 0.003;
+  const highlights = (state.params.curveHighlights || 0) * 0.003;
+  const whites = (state.params.curveWhites || 0) * 0.003;
+
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+
+  const steps = 40;
+  for (let s = 0; s <= steps; s++) {
+    const clum = s / steps;
+    const wBlacks = Math.max(0, 1.0 - clum * 4.0);
+    const s1 = Math.max(0, Math.min(1, clum / 0.35));
+    const smoothS1 = s1 * s1 * (3 - 2 * s1);
+    const s2 = Math.max(0, Math.min(1, (clum - 0.35) / 0.3));
+    const smoothS2 = s2 * s2 * (3 - 2 * s2);
+    const wShadows = smoothS1 * (1.0 - smoothS2);
+
+    const h1 = Math.max(0, Math.min(1, (clum - 0.35) / 0.3));
+    const smoothH1 = h1 * h1 * (3 - 2 * h1);
+    const h2 = Math.max(0, Math.min(1, (clum - 0.65) / 0.35));
+    const smoothH2 = h2 * h2 * (3 - 2 * h2);
+    const wHighlights = smoothH1 * (1.0 - smoothH2);
+
+    const wWhites = smoothH2;
+
+    const delta = (blacks * wBlacks) + (shadows * wShadows) + (highlights * wHighlights) + (whites * wWhites);
+    const outLum = Math.max(0, Math.min(1, clum + delta));
+
+    const px = clum * w;
+    const py = (1.0 - outLum) * h;
+    if (s === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+}
+
+// Update curve graph on render
+const origScheduleRender = scheduleRender;
+scheduleRender = function() {
+  origScheduleRender();
+  renderCurveVisual();
+};
+
 // Bootstrapping
 bindSliders();
 renderPresets();
+renderCurveVisual();
 loadImage(generateSampleImage(), 'sample-photo.jpg');

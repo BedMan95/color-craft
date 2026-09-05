@@ -114,6 +114,7 @@ export class WebGLRenderer {
       splitBalance: gl.getUniformLocation(p, 'u_splitBalance'),
       skinSmooth: gl.getUniformLocation(p, 'u_skinSmooth'),
       glow: gl.getUniformLocation(p, 'u_glow'),
+      curve: gl.getUniformLocation(p, 'u_curve'),
     };
   }
 
@@ -215,6 +216,15 @@ export class WebGLRenderer {
     // Meitu Skin Smoothing & Glow
     gl.uniform1f(this.uniforms.skinSmooth, params.skinSmooth || 0);
     gl.uniform1f(this.uniforms.glow, params.glow || 0);
+
+    // Parametric Tone Curve
+    gl.uniform4f(
+      this.uniforms.curve,
+      params.curveBlacks || 0,
+      params.curveShadows || 0,
+      params.curveHighlights || 0,
+      params.curveWhites || 0
+    );
 
     // HSL Bands: array of 7 vec3
     // red, orange, yellow, green, cyan, blue, magenta
