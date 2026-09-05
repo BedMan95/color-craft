@@ -53,6 +53,8 @@ uniform float u_maskInvert;    // 0 or 1
 uniform float u_clarity;       // -100 to 100
 uniform float u_texture;       // -100 to 100
 uniform float u_dehaze;        // -100 to 100
+uniform float u_sharpen;       // 0 to 100 (Unsharp mask high frequency boost)
+uniform float u_noiseReduction;// 0 to 100 (Luminance smoothing)
 uniform vec2 u_texelSize;      // 1.0 / canvas dimensions
 
 // Color Grading / Split Toning
@@ -188,6 +190,18 @@ void main() {
 
     // Texture (fine detail)
     color += highPass * (u_texture * 0.015);
+
+    // Sharpening (High-pass unsharp mask boost)
+    if (u_sharpen > 0.0) {
+      color += highPass * (u_sharpen * 0.025);
+    }
+
+    // Noise Reduction (Luminance smoothing in flat/low-contrast areas)
+    if (u_noiseReduction > 0.0) {
+      float edgeVal = length(highPass);
+      float nrWeight = (1.0 - smoothstep(0.01, 0.08, edgeVal)) * (u_noiseReduction * 0.01);
+      color = mix(color, blur, nrWeight * 0.75);
+    }
 
     // Clarity (mid-frequency local contrast)
     float midtoneMask = 1.0 - 2.0 * abs(lum - 0.5);

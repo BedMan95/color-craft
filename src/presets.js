@@ -26,10 +26,12 @@ export const DEFAULT_PARAMS = {
   maskExposure: 0,
   maskWarmth: 0,
   maskInvert: 0,
-  // Detail & Clarity
+  // Detail, Clarity & Sharpening
   texture: 0,
   clarity: 0,
   dehaze: 0,
+  sharpen: 0,
+  noiseReduction: 0,
   // Color Grading / Split Toning
   splitShadowHue: 210,      // Default cool shadows (Teal/Blue)
   splitShadowSat: 0,

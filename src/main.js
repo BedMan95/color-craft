@@ -352,7 +352,7 @@ const SLIDERS = [
   'vibrance', 'saturation',
   'lightIntensity', 'lightWarmth', 'lightRadius', 'lightX', 'lightY',
   'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
-  'texture', 'clarity', 'dehaze',
+  'texture', 'clarity', 'dehaze', 'sharpen', 'noiseReduction',
   'splitShadowHue', 'splitShadowSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
   'skinSmooth', 'skinTone', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
   'curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites',
@@ -492,6 +492,8 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.texture = 0;
       state.params.clarity = 0;
       state.params.dehaze = 0;
+      state.params.sharpen = 0;
+      state.params.noiseReduction = 0;
     } else if (target === 'splitToning') {
       state.params.splitShadowHue = 210;
       state.params.splitShadowSat = 0;

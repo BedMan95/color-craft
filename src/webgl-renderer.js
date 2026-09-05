@@ -108,6 +108,8 @@ export class WebGLRenderer {
       clarity: gl.getUniformLocation(p, 'u_clarity'),
       texture: gl.getUniformLocation(p, 'u_texture'),
       dehaze: gl.getUniformLocation(p, 'u_dehaze'),
+      sharpen: gl.getUniformLocation(p, 'u_sharpen'),
+      noiseReduction: gl.getUniformLocation(p, 'u_noiseReduction'),
       texelSize: gl.getUniformLocation(p, 'u_texelSize'),
       shadowTint: gl.getUniformLocation(p, 'u_shadowTint'),
       highlightTint: gl.getUniformLocation(p, 'u_highlightTint'),
@@ -194,10 +196,12 @@ export class WebGLRenderer {
     gl.uniform1f(this.uniforms.maskWarmth, params.maskWarmth || 0);
     gl.uniform1f(this.uniforms.maskInvert, params.maskInvert ? 1.0 : 0.0);
 
-    // Texture, Clarity & Dehaze
+    // Texture, Clarity & Dehaze, Sharpening & Noise Reduction
     gl.uniform1f(this.uniforms.clarity, params.clarity || 0);
     gl.uniform1f(this.uniforms.texture, params.texture || 0);
     gl.uniform1f(this.uniforms.dehaze, params.dehaze || 0);
+    gl.uniform1f(this.uniforms.sharpen, params.sharpen || 0);
+    gl.uniform1f(this.uniforms.noiseReduction, params.noiseReduction || 0);
     gl.uniform2f(this.uniforms.texelSize, 1.0 / (this.canvas.width || 1000), 1.0 / (this.canvas.height || 1000));
 
     // Color Grading / Split Toning
