@@ -593,16 +593,6 @@ function openSheet(focusSection = null) {
   const sheetScrollEl = sidebar.querySelector('.sheet-scroll');
   const presetSec = sidebar.querySelector('.sheet-section');
 
-  if (window.innerWidth <= 768) {
-    const sheetH = sidebar.getBoundingClientRect().height || window.innerHeight * 0.52;
-    viewportContainer.style.paddingBottom = `${sheetH}px`;
-    if (state.renderer.currentImage) {
-      const img = state.renderer.currentImage;
-      fitCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
-      scheduleRender();
-    }
-  }
-
   if (focusSection === 'presets') {
     btnBottomPresets?.classList.add('active');
     presetSec?.scrollIntoView({ behavior: 'smooth' });
@@ -620,20 +610,11 @@ function closeSheet() {
   sidebar.classList.remove('open');
   sidebar.style.height = '';
   sidebar.style.maxHeight = '';
-  viewportContainer.style.paddingBottom = '';
   sheetBackdrop.classList.remove('active');
   state.isSheetOpen = false;
   btnBottomAdjust?.classList.remove('active');
   btnBottomPresets?.classList.remove('active');
   btnBottomHsl?.classList.remove('active');
-
-  if (window.innerWidth <= 768 && state.renderer.currentImage) {
-    const img = state.renderer.currentImage;
-    setTimeout(() => {
-      fitCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
-      scheduleRender();
-    }, 280);
-  }
 }
 
 btnBottomAdjust?.addEventListener('click', () => {
@@ -959,9 +940,8 @@ if (sheetHandle && sidebar) {
     isDraggingSheet = true;
     startY = e.clientY;
     startHeight = sidebar.getBoundingClientRect().height;
-    maxH = window.innerHeight * 0.85;
+    maxH = window.innerHeight * 0.70;
     sidebar.classList.add('dragging');
-    viewportContainer.classList.add('dragging');
     sheetHandle.setPointerCapture(e.pointerId);
   });
 
@@ -971,19 +951,12 @@ if (sheetHandle && sidebar) {
     const nextH = Math.max(minH, Math.min(maxH, startHeight + dy));
     sidebar.style.height = `${nextH}px`;
     sidebar.style.maxHeight = `${nextH}px`;
-    viewportContainer.style.paddingBottom = `${nextH}px`;
-    if (state.renderer.currentImage) {
-      const img = state.renderer.currentImage;
-      fitCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
-      scheduleRender();
-    }
   });
 
   const stopSheetDrag = (e) => {
     if (isDraggingSheet) {
       isDraggingSheet = false;
       sidebar.classList.remove('dragging');
-      viewportContainer.classList.remove('dragging');
       if (sheetHandle.hasPointerCapture(e.pointerId)) {
         sheetHandle.releasePointerCapture(e.pointerId);
       }
@@ -992,7 +965,6 @@ if (sheetHandle && sidebar) {
         closeSheet();
         sidebar.style.height = '';
         sidebar.style.maxHeight = '';
-        viewportContainer.style.paddingBottom = '';
       }
     }
   };

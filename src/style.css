@@ -1055,14 +1055,14 @@ body {
   }
 
   .workspace {
-    padding-bottom: calc(var(--bottom-bar-h) + 120px);
+    padding-bottom: var(--bottom-bar-h);
   }
 
   .viewport-area {
     align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
-    transition: padding-bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-top: 10px;
+    padding-bottom: 120px;
+    transition: none;
   }
   .viewport-area.dragging {
     transition: none !important;
