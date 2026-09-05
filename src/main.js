@@ -226,6 +226,9 @@ function loadImage(img, fileName = 'sample-photo.jpg') {
     metaRes.textContent = `${img.naturalWidth || img.width} × ${img.naturalHeight || img.height}`;
     fitCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
     state.renderer.setImage(img);
+    presetThumbnailCache.clear();
+    thumbBaseCanvas = null;
+    renderPresets();
     scheduleRender();
     showToast(`Loaded: ${fileName}`);
   };
@@ -359,6 +362,51 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
   });
 });
 
+// Preset Thumbnail Offscreen Generation
+let presetThumbnailCache = new Map();
+let thumbOffscreenRenderer = null;
+let thumbBaseCanvas = null;
+
+function getThumbBaseCanvas() {
+  if (!state.renderer.currentImage) return null;
+  if (!thumbBaseCanvas) {
+    thumbBaseCanvas = document.createElement('canvas');
+    thumbBaseCanvas.width = 96;
+    thumbBaseCanvas.height = 96;
+  }
+  const ctx = thumbBaseCanvas.getContext('2d');
+  const img = state.renderer.currentImage;
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const minDim = Math.min(iw, ih);
+  const sx = (iw - minDim) / 2;
+  const sy = (ih - minDim) / 2;
+  ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, 96, 96);
+  return thumbBaseCanvas;
+}
+
+function renderPresetThumbnail(preset) {
+  if (presetThumbnailCache.has(preset.id)) {
+    return presetThumbnailCache.get(preset.id);
+  }
+  const base = getThumbBaseCanvas();
+  if (!base) return '';
+
+  if (!thumbOffscreenRenderer) {
+    const off = document.createElement('canvas');
+    off.width = 96;
+    off.height = 96;
+    thumbOffscreenRenderer = new WebGLRenderer(off);
+  }
+
+  thumbOffscreenRenderer.setImage(base);
+  thumbOffscreenRenderer.setSplitPosition(-1.0);
+  thumbOffscreenRenderer.render(preset.params);
+  const dataUrl = thumbOffscreenRenderer.canvas.toDataURL('image/jpeg', 0.8);
+  presetThumbnailCache.set(preset.id, dataUrl);
+  return dataUrl;
+}
+
 // Preset Management
 function renderPresets() {
   presetListEl.innerHTML = '';
@@ -366,13 +414,23 @@ function renderPresets() {
   const allPresets = [...BUILTIN_PRESETS, ...userPresets];
 
   allPresets.forEach(p => {
-    const pill = document.createElement('button');
-    pill.className = `preset-pill ${state.activePresetId === p.id ? 'active' : ''}`;
-    pill.textContent = p.name;
-    pill.addEventListener('click', () => {
+    const card = document.createElement('button');
+    card.className = `preset-card ${state.activePresetId === p.id ? 'active' : ''}`;
+    card.title = p.name;
+
+    const thumbUrl = renderPresetThumbnail(p);
+
+    card.innerHTML = `
+      <div class="preset-thumb-wrap">
+        ${thumbUrl ? `<img class="preset-thumb-canvas" src="${thumbUrl}" alt="${p.name}" />` : ''}
+      </div>
+      <span class="preset-thumb-name">${p.name}</span>
+    `;
+
+    card.addEventListener('click', () => {
       applyPreset(p);
     });
-    presetListEl.appendChild(pill);
+    presetListEl.appendChild(card);
   });
 }
 
