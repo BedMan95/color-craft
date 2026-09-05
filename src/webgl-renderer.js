@@ -112,6 +112,7 @@ export class WebGLRenderer {
       noiseReduction: gl.getUniformLocation(p, 'u_noiseReduction'),
       texelSize: gl.getUniformLocation(p, 'u_texelSize'),
       shadowTint: gl.getUniformLocation(p, 'u_shadowTint'),
+      midtoneTint: gl.getUniformLocation(p, 'u_midtoneTint'),
       highlightTint: gl.getUniformLocation(p, 'u_highlightTint'),
       splitBalance: gl.getUniformLocation(p, 'u_splitBalance'),
       skinSmooth: gl.getUniformLocation(p, 'u_skinSmooth'),
@@ -211,6 +212,13 @@ export class WebGLRenderer {
     const shG = (Math.cos(shHueRad - 2.094) * 0.5 + 0.5) * shSat;
     const shB = (Math.cos(shHueRad + 2.094) * 0.5 + 0.5) * shSat;
     gl.uniform3f(this.uniforms.shadowTint, shR, shG, shB);
+
+    const midHueRad = ((params.splitMidtoneHue || 0) * Math.PI) / 180;
+    const midSat = (params.splitMidtoneSat || 0) * 0.01;
+    const midR = (Math.cos(midHueRad) * 0.5 + 0.5) * midSat;
+    const midG = (Math.cos(midHueRad - 2.094) * 0.5 + 0.5) * midSat;
+    const midB = (Math.cos(midHueRad + 2.094) * 0.5 + 0.5) * midSat;
+    gl.uniform3f(this.uniforms.midtoneTint, midR, midG, midB);
 
     const hiHueRad = ((params.splitHighlightHue || 0) * Math.PI) / 180;
     const hiSat = (params.splitHighlightSat || 0) * 0.01;

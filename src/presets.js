@@ -32,9 +32,11 @@ export const DEFAULT_PARAMS = {
   dehaze: 0,
   sharpen: 0,
   noiseReduction: 0,
-  // Color Grading / Split Toning
+  // Color Grading / Split Toning (3-Way Wheels: Shadows, Midtones, Highlights)
   splitShadowHue: 210,      // Default cool shadows (Teal/Blue)
   splitShadowSat: 0,
+  splitMidtoneHue: 30,      // Natural skin/warm midtones
+  splitMidtoneSat: 0,
   splitHighlightHue: 40,    // Default warm highlights (Gold/Orange)
   splitHighlightSat: 0,
   splitBalance: 0,

@@ -59,6 +59,7 @@ uniform vec2 u_texelSize;      // 1.0 / canvas dimensions
 
 // Color Grading / Split Toning
 uniform vec3 u_shadowTint;     // rgb tint for shadows
+uniform vec3 u_midtoneTint;    // rgb tint for midtones (3-way grading)
 uniform vec3 u_highlightTint;  // rgb tint for highlights
 uniform float u_splitBalance;  // -100 to 100
 
@@ -308,14 +309,18 @@ void main() {
 
   color = hsl2rgb(hsl);
 
-  // 7b. Color Grading / Split Toning (Shadows & Highlights color wheels)
-  if (length(u_shadowTint) > 0.001 || length(u_highlightTint) > 0.001) {
+  // 7b. Color Grading / Split Toning (3-Way Color Wheels: Shadows, Midtones, Highlights)
+  if (length(u_shadowTint) > 0.001 || length(u_midtoneTint) > 0.001 || length(u_highlightTint) > 0.001) {
     float splitLum = dot(color, vec3(0.2126, 0.7152, 0.0722));
     float bal = u_splitBalance * 0.005;
-    float shWeight = 1.0 - smoothstep(0.0, 0.5 + bal, splitLum);
-    float hiWeight = smoothstep(0.5 + bal, 1.0, splitLum);
+    
+    // Smooth weights distribution across 3 tonal ranges
+    float shWeight = 1.0 - smoothstep(0.0, 0.45 + bal, splitLum);
+    float midWeight = smoothstep(0.15 + bal, 0.5 + bal, splitLum) * (1.0 - smoothstep(0.5 + bal, 0.85 + bal, splitLum));
+    float hiWeight = smoothstep(0.55 + bal, 1.0, splitLum);
 
     color += u_shadowTint * shWeight * 0.35;
+    color += u_midtoneTint * midWeight * 0.35;
     color += u_highlightTint * hiWeight * 0.35;
     color = clamp(color, 0.0, 1.0);
   }
