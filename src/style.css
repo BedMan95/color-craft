@@ -1154,19 +1154,39 @@ body {
    Mobile-First Layout Enhancements (<= 768px)
    ========================================================================== */
 
+.md-show-inline {
+  display: inline-flex;
+}
+
 @media (max-width: 768px) {
   .btn-label {
     display: none;
   }
+  .md-show-inline {
+    display: none !important;
+  }
   .btn-sm {
-    padding: 0 8px;
+    padding: 0 6px;
     height: 30px;
+    min-width: 30px;
+  }
+  .header-container {
+    padding: 0 8px;
+    gap: 6px;
   }
   .file-badge {
-    max-width: 90px;
+    display: none !important;
   }
-  .header-left, .header-right {
+  .header-title {
+    font-size: 13px;
+  }
+  .header-left {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .header-right {
     gap: 4px;
+    flex-shrink: 0;
   }
 
   /* Bottom Navigation Bar */

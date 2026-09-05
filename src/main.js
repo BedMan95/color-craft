@@ -1051,6 +1051,10 @@ btnReset.addEventListener('click', () => {
   showToast('Reset all adjustments');
 });
 
+document.getElementById('btn-reset-all-mobile')?.addEventListener('click', () => {
+  btnReset.click();
+});
+
 // Image Upload
 fileInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
