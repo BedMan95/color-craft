@@ -181,15 +181,21 @@ function scheduleRender() {
 function fitCanvas(imgW, imgH) {
   const isMobile = window.innerWidth <= 768;
   const pad = isMobile ? 12 : 32;
-  const maxW = viewportContainer.clientWidth - pad;
-  const maxH = viewportContainer.clientHeight - pad;
+  const style = window.getComputedStyle(viewportContainer);
+  const padBottom = parseFloat(style.paddingBottom) || 0;
+  const padTop = parseFloat(style.paddingTop) || 0;
+  const padLeft = parseFloat(style.paddingLeft) || 0;
+  const padRight = parseFloat(style.paddingRight) || 0;
+
+  const availW = Math.max(50, viewportContainer.clientWidth - padLeft - padRight - pad);
+  const availH = Math.max(50, viewportContainer.clientHeight - padTop - padBottom - pad);
   const aspect = imgW / imgH;
 
-  let drawW = maxW;
+  let drawW = availW;
   let drawH = drawW / aspect;
 
-  if (drawH > maxH) {
-    drawH = maxH;
+  if (drawH > availH) {
+    drawH = availH;
     drawW = drawH * aspect;
   }
 
