@@ -355,7 +355,7 @@ const SLIDERS = [
   'radialMaskExposure', 'radialMaskWarmth', 'radialMaskX', 'radialMaskY', 'radialMaskRx', 'radialMaskRy', 'radialMaskFeather',
   'texture', 'clarity', 'dehaze', 'sharpen', 'noiseReduction',
   'splitShadowHue', 'splitShadowSat', 'splitMidtoneHue', 'splitMidtoneSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
-  'skinSmooth', 'skinTone', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
+  'skinSmooth', 'skinTone', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY', 'faceSlim', 'faceRadius', 'faceX', 'faceY',
   'curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites',
   'vignette', 'grain'
 ];
@@ -534,6 +534,10 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.bokehRadius = 45;
       state.params.bokehX = 50;
       state.params.bokehY = 50;
+      state.params.faceSlim = 0;
+      state.params.faceRadius = 30;
+      state.params.faceX = 50;
+      state.params.faceY = 65;
     } else if (target === 'effects') {
       state.params.vignette = 0;
       state.params.grain = 0;

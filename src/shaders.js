@@ -76,6 +76,11 @@ uniform float u_skinSmooth;    // 0 to 100
 uniform float u_glow;          // 0 to 100
 uniform float u_skinTone;       // -100 to 100 (Porcelain / Cool to Warm / Tan / Rosy)
 
+// Face Slimming & Reshape (Liquify Warp)
+uniform float u_faceSlim;      // 0 to 100 (V-line jaw pinching towards center)
+uniform vec2 u_faceCenter;     // [0..1] normalized chin/jaw center
+uniform float u_faceRadius;    // deformation radius [0.05..0.5]
+
 // Portrait Bokeh Depth Blur (Lens simulation)
 uniform float u_bokehBlur;     // 0 to 100
 uniform vec2 u_bokehCenter;    // [0..1] normalized focus center
@@ -144,11 +149,25 @@ float rand(vec2 co) {
 }
 
 void main() {
-  vec4 original = texture(u_image, v_texCoord);
+  vec2 coord = v_texCoord;
+
+  // 0. Meitu Face Slimming (Liquify Pinch Deformation)
+  if (u_faceSlim > 0.0) {
+    vec2 diff = coord - u_faceCenter;
+    // Compress more horizontally than vertically for natural V-shape jawline
+    float d = length(vec2(diff.x * 1.3, diff.y));
+    if (d < u_faceRadius && d > 0.0001) {
+      float percent = 1.0 - (d / u_faceRadius);
+      float strength = (u_faceSlim * 0.0035) * pow(percent, 2.0);
+      coord += diff * strength;
+    }
+  }
+
+  vec4 original = texture(u_image, coord);
 
   // Split View check: original on left side if split active
   if (u_splitPos >= 0.0 && v_texCoord.x < u_splitPos) {
-    outColor = original;
+    outColor = texture(u_image, v_texCoord);
     return;
   }
 

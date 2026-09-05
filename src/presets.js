@@ -53,6 +53,11 @@ export const DEFAULT_PARAMS = {
   skinSmooth: 0,
   glow: 0,
   skinTone: 0,
+  // Face Slimming & Reshape
+  faceSlim: 0,
+  faceRadius: 30,
+  faceX: 50,
+  faceY: 65,
   // Portrait Bokeh Depth Blur
   bokehBlur: 0,
   bokehRadius: 45,

@@ -124,6 +124,9 @@ export class WebGLRenderer {
       skinSmooth: gl.getUniformLocation(p, 'u_skinSmooth'),
       glow: gl.getUniformLocation(p, 'u_glow'),
       skinTone: gl.getUniformLocation(p, 'u_skinTone'),
+      faceSlim: gl.getUniformLocation(p, 'u_faceSlim'),
+      faceCenter: gl.getUniformLocation(p, 'u_faceCenter'),
+      faceRadius: gl.getUniformLocation(p, 'u_faceRadius'),
       bokehBlur: gl.getUniformLocation(p, 'u_bokehBlur'),
       bokehCenter: gl.getUniformLocation(p, 'u_bokehCenter'),
       bokehRadius: gl.getUniformLocation(p, 'u_bokehRadius'),
@@ -255,6 +258,15 @@ export class WebGLRenderer {
     gl.uniform1f(this.uniforms.skinSmooth, params.skinSmooth || 0);
     gl.uniform1f(this.uniforms.glow, params.glow || 0);
     gl.uniform1f(this.uniforms.skinTone, params.skinTone || 0);
+
+    // Face Slimming & Reshape
+    gl.uniform1f(this.uniforms.faceSlim, params.faceSlim || 0);
+    gl.uniform2f(
+      this.uniforms.faceCenter,
+      (params.faceX ?? 50) * 0.01,
+      1.0 - (params.faceY ?? 65) * 0.01
+    );
+    gl.uniform1f(this.uniforms.faceRadius, (params.faceRadius ?? 30) * 0.01);
 
     // Portrait Bokeh Depth Blur
     gl.uniform1f(this.uniforms.bokehBlur, params.bokehBlur || 0);
