@@ -988,7 +988,7 @@ body {
   border-color: hsl(var(--destructive) / 0.4);
 }
 
-.sheet-backdrop {
+.mobile-preset-shelf {
   display: none;
 }
 
@@ -1052,13 +1052,35 @@ body {
   }
 
   .workspace {
-    padding-bottom: var(--bottom-bar-h);
+    padding-bottom: calc(var(--bottom-bar-h) + 94px);
   }
 
   .viewport-area {
-    align-items: flex-start;
-    padding-top: 12px;
-    padding-bottom: 50vh;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* Meitu Persistent Filter Shelf above bottom bar */
+  .mobile-preset-shelf {
+    position: fixed;
+    bottom: var(--bottom-bar-h);
+    left: 0;
+    right: 0;
+    height: 94px;
+    background: rgba(18, 18, 22, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid hsl(var(--border) / 0.7);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    z-index: 28;
+  }
+  .mobile-preset-shelf .preset-pill-list {
+    padding: 0;
+    margin: 0;
+    width: 100%;
   }
 
   /* Bottom Sheet Drawer for Mobile */

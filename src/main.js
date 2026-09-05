@@ -408,29 +408,49 @@ function renderPresetThumbnail(preset) {
 }
 
 // Preset Management
+const mobilePresetListEl = document.getElementById('mobile-preset-list');
+
 function renderPresets() {
   presetListEl.innerHTML = '';
+  if (mobilePresetListEl) mobilePresetListEl.innerHTML = '';
+
   const userPresets = loadUserPresets();
   const allPresets = [...BUILTIN_PRESETS, ...userPresets];
 
   allPresets.forEach(p => {
+    const thumbUrl = renderPresetThumbnail(p);
+
+    // Desktop/Sheet preset card
     const card = document.createElement('button');
     card.className = `preset-card ${state.activePresetId === p.id ? 'active' : ''}`;
     card.title = p.name;
-
-    const thumbUrl = renderPresetThumbnail(p);
-
     card.innerHTML = `
       <div class="preset-thumb-wrap">
         ${thumbUrl ? `<img class="preset-thumb-canvas" src="${thumbUrl}" alt="${p.name}" />` : ''}
       </div>
       <span class="preset-thumb-name">${p.name}</span>
     `;
-
     card.addEventListener('click', () => {
       applyPreset(p);
     });
     presetListEl.appendChild(card);
+
+    // Persistent Mobile Bottom Shelf card
+    if (mobilePresetListEl) {
+      const mCard = document.createElement('button');
+      mCard.className = `preset-card ${state.activePresetId === p.id ? 'active' : ''}`;
+      mCard.title = p.name;
+      mCard.innerHTML = `
+        <div class="preset-thumb-wrap">
+          ${thumbUrl ? `<img class="preset-thumb-canvas" src="${thumbUrl}" alt="${p.name}" />` : ''}
+        </div>
+        <span class="preset-thumb-name">${p.name}</span>
+      `;
+      mCard.addEventListener('click', () => {
+        applyPreset(p);
+      });
+      mobilePresetListEl.appendChild(mCard);
+    }
   });
 }
 
