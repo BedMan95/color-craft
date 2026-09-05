@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>ColorCraft</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-background text-foreground antialiased">
+  <div id="app" class="flex flex-col h-screen w-screen overflow-hidden select-none">
+
+    <!-- Top App Bar (shadcn navbar) -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
+          </svg>
+          <span class="brand-title">Color<span class="text-primary font-semibold">Craft</span></span>
+        </div>
+
+        <div class="file-badge" id="file-badge">
+          <span class="badge-dot"></span>
+          <span class="badge-text" id="current-filename">sample-photo.jpg</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <label class="btn btn-secondary btn-sm file-label">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="btn-label">Open</span>
+          <input type="file" id="file-input" accept="image/*" />
+        </label>
+
+        <button id="btn-sample" class="btn btn-ghost btn-sm" title="Load sample image">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          <span class="btn-label">Sample</span>
+        </button>
+
+        <button id="btn-split" class="btn btn-ghost btn-sm" title="Toggle Split View (Y)">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+          <span class="btn-label">Split</span>
+        </button>
+
+        <button id="btn-reset" class="btn btn-ghost btn-sm" title="Reset All">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span class="btn-label">Reset</span>
+        </button>
+
+        <button id="btn-export-img" class="btn btn-primary btn-sm">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span class="btn-label">Export</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <!-- Canvas Area -->
+      <section class="viewport-area" id="viewport-container">
+        <canvas id="gl-canvas"></canvas>
+
+        <!-- Draggable Split Divider -->
+        <div id="split-handle" class="split-handle hidden">
+          <div class="split-line"></div>
+          <div class="split-knob">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/></svg>
+          </div>
+        </div>
+
+        <!-- Canvas Stats Overlay -->
+        <div class="viewport-meta">
+          <span id="meta-res">-- × --</span>
+          <span id="meta-fps" class="text-muted-foreground">-- fps</span>
+        </div>
+      </section>
+
+      <!-- Sidebar / Mobile Sheet Drawer (shadcn sheet) -->
+      <div id="sheet-backdrop" class="sheet-backdrop"></div>
+      <aside class="sidebar-sheet" id="sidebar">
+        <div class="sheet-drag-handle md-hide" id="sheet-handle">
+          <div class="drag-bar"></div>
+        </div>
+
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <h2 class="sheet-title">ColorCraft Studio</h2>
+            <p class="sheet-desc">Adjust tones and color formulas</p>
+          </div>
+          <button id="btn-close-sheet" class="btn btn-ghost btn-icon md-hide" aria-label="Close">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Preset Section (shadcn segmented pills) -->
+        <div class="sheet-section border-b">
+          <div class="section-title-row">
+            <div class="section-label-bar">
+              <span class="section-label">Presets</span>
+            </div>
+            <div class="action-btn-group">
+              <button id="btn-manage-presets" class="btn-action" title="Manage Presets (Delete, Rename, Export)">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Manage</span>
+              </button>
+              <button id="btn-scraper-modal" class="btn-action" title="Scrape online preset or paste recipe">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                <span>Scrape</span>
+              </button>
+              <button id="btn-save-preset" class="btn-action" title="Save Preset">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                <span>Save</span>
+              </button>
+              <button id="btn-export-preset" class="btn-action" title="Export Preset JSON">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>JSON</span>
+              </button>
+              <label class="btn-action" title="Import Preset JSON or XMP">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Import</span>
+                <input type="file" id="preset-file-input" accept=".json,.xmp,.xml" class="sr-only" />
+              </label>
+            </div>
+          </div>
+          <div class="preset-pill-list" id="preset-list"></div>
+        </div>
+
+        <!-- Parameter Tabs & Sliders -->
+        <div class="sheet-scroll">
+          <!-- White Balance -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>White Balance</span>
+              <button class="btn-reset-sec" data-target="wb" title="Reset White Balance">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Temperature</span>
+                  <span class="slider-val" id="val-temp">0</span>
+                </div>
+                <input type="range" id="param-temp" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Tint</span>
+                  <span class="slider-val" id="val-tint">0</span>
+                </div>
+                <input type="range" id="param-tint" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Tone -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Tone Adjustments</span>
+              <button class="btn-reset-sec" data-target="tone" title="Reset Tone">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Exposure</span>
+                  <span class="slider-val" id="val-exposure">0</span>
+                </div>
+                <input type="range" id="param-exposure" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Contrast</span>
+                  <span class="slider-val" id="val-contrast">0</span>
+                </div>
+                <input type="range" id="param-contrast" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Highlights</span>
+                  <span class="slider-val" id="val-highlights">0</span>
+                </div>
+                <input type="range" id="param-highlights" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Shadows</span>
+                  <span class="slider-val" id="val-shadows">0</span>
+                </div>
+                <input type="range" id="param-shadows" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Whites</span>
+                  <span class="slider-val" id="val-whites">0</span>
+                </div>
+                <input type="range" id="param-whites" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Blacks</span>
+                  <span class="slider-val" id="val-blacks">0</span>
+                </div>
+                <input type="range" id="param-blacks" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Presence -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Presence</span>
+              <button class="btn-reset-sec" data-target="presence" title="Reset Presence">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Vibrance</span>
+                  <span class="slider-val" id="val-vibrance">0</span>
+                </div>
+                <input type="range" id="param-vibrance" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Saturation</span>
+                  <span class="slider-val" id="val-saturation">0</span>
+                </div>
+                <input type="range" id="param-saturation" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- HSL Color Grading -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>HSL Color Grading</span>
+              <button class="btn-reset-sec" data-target="hsl" title="Reset HSL">Reset</button>
+            </div>
+            <!-- shadcn TabsList -->
+            <div class="tabs-list" id="hsl-tabs">
+              <button class="tab-trigger active" data-band="red">Red</button>
+              <button class="tab-trigger" data-band="orange">Orange</button>
+              <button class="tab-trigger" data-band="yellow">Yellow</button>
+              <button class="tab-trigger" data-band="green">Green</button>
+              <button class="tab-trigger" data-band="cyan">Cyan</button>
+              <button class="tab-trigger" data-band="blue">Blue</button>
+              <button class="tab-trigger" data-band="magenta">Magenta</button>
+            </div>
+            <div class="control-list mt-3">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Hue Shift</span>
+                  <span class="slider-val" id="val-hsl-hue">0</span>
+                </div>
+                <input type="range" id="param-hsl-hue" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Saturation</span>
+                  <span class="slider-val" id="val-hsl-sat">0</span>
+                </div>
+                <input type="range" id="param-hsl-sat" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Luminance</span>
+                  <span class="slider-val" id="val-hsl-lum">0</span>
+                </div>
+                <input type="range" id="param-hsl-lum" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Effects -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Effects</span>
+              <button class="btn-reset-sec" data-target="effects" title="Reset Effects">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Vignette</span>
+                  <span class="slider-val" id="val-vignette">0</span>
+                </div>
+                <input type="range" id="param-vignette" min="0" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Film Grain</span>
+                  <span class="slider-val" id="val-grain">0</span>
+                </div>
+                <input type="range" id="param-grain" min="0" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar (shadcn mobile bar) -->
+    <nav class="mobile-bottom-bar md-hide">
+      <button id="btn-bottom-presets" class="bottom-nav-item">
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span>Presets</span>
+      </button>
+
+      <button id="btn-bottom-adjust" class="bottom-nav-item active">
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><line x1="12" x2="20" y1="12" y2="12"/><line x1="4" x2="8" y1="12" y2="12"/><circle cx="10" cy="12" r="2"/></svg>
+        <span>Tune</span>
+      </button>
+
+      <button id="btn-bottom-split" class="bottom-nav-item">
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><circle cx="12" cy="12" r="10"/></svg>
+        <span>Split</span>
+      </button>
+
+      <button id="btn-bottom-export" class="bottom-nav-item text-primary font-medium">
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Export</span>
+      </button>
+    </nav>
+
+    <!-- Toast Notification (shadcn sonner toast style) -->
+    <div id="toast" class="toast-card hidden">
+      <span class="toast-dot"></span>
+      <span id="toast-message">Ready</span>
+    </div>
+
+    <!-- Scraper Dialog Modal (shadcn dialog) -->
+    <div id="scraper-backdrop" class="modal-backdrop hidden"></div>
+    <div id="scraper-dialog" class="modal-dialog hidden">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Preset Scraper & Importer</h3>
+          <p class="modal-desc">Scrape from URL, Lightroom XMP, or paste text recipe</p>
+        </div>
+        <button id="btn-close-scraper" class="btn btn-ghost btn-icon" aria-label="Close">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Scrape from URL -->
+        <div class="input-group">
+          <label class="input-label">Scrape from Web / Preset URL</label>
+          <div class="input-with-btn">
+            <input type="url" id="scraper-url-input" placeholder="https://example.com/preset.xmp or .json" class="shad-input" />
+            <button id="btn-do-scrape-url" class="btn btn-primary btn-sm">Scrape</button>
+          </div>
+        </div>
+
+        <div class="modal-divider"><span>OR PASTE RECIPE / XMP TEXT</span></div>
+
+        <!-- Scrape from Text Paste -->
+        <div class="input-group">
+          <label class="input-label">Paste Lightroom Recipe or XMP XML</label>
+          <textarea id="scraper-text-input" rows="4" placeholder="Exposure: +15, Contrast: -10, Highlights: -35, Shadows: +25, Temp: +12, Tint: -4, Vibrance: +18..." class="shad-textarea"></textarea>
+          <div class="modal-actions-row">
+            <button id="btn-sample-recipe" class="btn btn-ghost btn-xs">Insert Sample</button>
+            <button id="btn-do-parse-text" class="btn btn-secondary btn-sm">Apply & Save Recipe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preset Manager Dialog Modal (shadcn dialog) -->
+    <div id="manager-backdrop" class="modal-backdrop hidden"></div>
+    <div id="manager-dialog" class="modal-dialog hidden">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Preset Library Manager</h3>
+          <p class="modal-desc">Organize, rename, export, and delete presets</p>
+        </div>
+        <button id="btn-close-manager" class="btn btn-ghost btn-icon" aria-label="Close">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="preset-manager-list" id="manager-list"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-export-all-presets" class="btn btn-secondary btn-sm">Export All JSON</button>
+        <button id="btn-done-manager" class="btn btn-primary btn-sm">Done</button>
+      </div>
+    </div>
+
+    <!-- Alert / Confirm / Prompt Custom Dialog (shadcn modal) -->
+    <div id="alert-backdrop" class="modal-backdrop hidden" style="z-index: 85;"></div>
+    <div id="alert-dialog" class="modal-dialog hidden" style="z-index: 90; max-width: 400px;">
+      <div class="modal-header" style="margin-bottom: 12px;">
+        <div>
+          <h3 class="modal-title" id="alert-dialog-title">Notice</h3>
+          <p class="modal-desc" id="alert-dialog-desc"></p>
+        </div>
+      </div>
+      <div class="modal-body" id="alert-dialog-body" style="gap: 10px;">
+        <input type="text" id="alert-dialog-input" class="shad-input hidden" />
+      </div>
+      <div class="modal-footer" style="margin-top: 16px;">
+        <button id="btn-alert-cancel" class="btn btn-ghost btn-sm hidden">Cancel</button>
+        <button id="btn-alert-confirm" class="btn btn-primary btn-sm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
