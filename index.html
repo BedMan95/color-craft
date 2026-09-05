@@ -46,6 +46,11 @@
           <span class="btn-label">Split</span>
         </button>
 
+        <button id="btn-rotate" class="btn btn-ghost btn-sm" title="Rotate Image 90° Clockwise">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span class="btn-label">Rotate</span>
+        </button>
+
         <button id="btn-reset" class="btn btn-ghost btn-sm" title="Reset All">
           <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           <span class="btn-label">Reset</span>
@@ -368,6 +373,106 @@
               <div class="flex items-center justify-between py-1">
                 <span class="slider-name">Invert Mask</span>
                 <input type="checkbox" id="param-maskInvert" class="shad-checkbox" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Clarity, Texture & Dehaze (Lightroom Detail) -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Detail & Presence</span>
+              <button class="btn-reset-sec" data-target="detail" title="Reset Detail">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Texture</span>
+                  <span class="slider-val" id="val-texture">0</span>
+                </div>
+                <input type="range" id="param-texture" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Clarity</span>
+                  <span class="slider-val" id="val-clarity">0</span>
+                </div>
+                <input type="range" id="param-clarity" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Dehaze</span>
+                  <span class="slider-val" id="val-dehaze">0</span>
+                </div>
+                <input type="range" id="param-dehaze" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Grading / Split Toning -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Color Grading (Split Toning)</span>
+              <button class="btn-reset-sec" data-target="splitToning" title="Reset Split Toning">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Shadows Hue (°)</span>
+                  <span class="slider-val" id="val-splitShadowHue">210</span>
+                </div>
+                <input type="range" id="param-splitShadowHue" min="0" max="360" value="210" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Shadows Saturation</span>
+                  <span class="slider-val" id="val-splitShadowSat">0</span>
+                </div>
+                <input type="range" id="param-splitShadowSat" min="0" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Highlights Hue (°)</span>
+                  <span class="slider-val" id="val-splitHighlightHue">40</span>
+                </div>
+                <input type="range" id="param-splitHighlightHue" min="0" max="360" value="40" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Highlights Saturation</span>
+                  <span class="slider-val" id="val-splitHighlightSat">0</span>
+                </div>
+                <input type="range" id="param-splitHighlightSat" min="0" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Balance</span>
+                  <span class="slider-val" id="val-splitBalance">0</span>
+                </div>
+                <input type="range" id="param-splitBalance" min="-100" max="100" value="0" class="shad-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Meitu Beauty: Skin Smooth & Dreamy Glow -->
+          <div class="accordion-item">
+            <div class="accordion-trigger">
+              <span>Meitu Retouch & Glow</span>
+              <button class="btn-reset-sec" data-target="beauty" title="Reset Retouch">Reset</button>
+            </div>
+            <div class="control-list">
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Skin Smoothing</span>
+                  <span class="slider-val" id="val-skinSmooth">0</span>
+                </div>
+                <input type="range" id="param-skinSmooth" min="0" max="100" value="0" class="shad-slider" />
+              </div>
+              <div class="slider-row">
+                <div class="slider-label-wrap">
+                  <span class="slider-name">Dreamy Soft Glow</span>
+                  <span class="slider-val" id="val-glow">0</span>
+                </div>
+                <input type="range" id="param-glow" min="0" max="100" value="0" class="shad-slider" />
               </div>
             </div>
           </div>

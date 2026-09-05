@@ -250,6 +250,9 @@ const SLIDERS = [
   'vibrance', 'saturation',
   'lightIntensity', 'lightWarmth', 'lightRadius', 'lightX', 'lightY',
   'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
+  'texture', 'clarity', 'dehaze',
+  'splitShadowHue', 'splitShadowSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
+  'skinSmooth', 'glow',
   'vignette', 'grain'
 ];
 
@@ -380,6 +383,19 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.maskInvert = 0;
       const chk = document.getElementById('param-maskInvert');
       if (chk) chk.checked = false;
+    } else if (target === 'detail') {
+      state.params.texture = 0;
+      state.params.clarity = 0;
+      state.params.dehaze = 0;
+    } else if (target === 'splitToning') {
+      state.params.splitShadowHue = 210;
+      state.params.splitShadowSat = 0;
+      state.params.splitHighlightHue = 40;
+      state.params.splitHighlightSat = 0;
+      state.params.splitBalance = 0;
+    } else if (target === 'beauty') {
+      state.params.skinSmooth = 0;
+      state.params.glow = 0;
     } else if (target === 'effects') {
       state.params.vignette = 0;
       state.params.grain = 0;
@@ -601,6 +617,35 @@ window.addEventListener('pointerup', (e) => {
       // safe fallback
     }
   }
+});
+
+// Rotate 90 deg clockwise
+const btnRotate = document.getElementById('btn-rotate');
+btnRotate?.addEventListener('click', () => {
+  if (!state.renderer.currentImage) return;
+  const img = state.renderer.currentImage;
+  const origW = img.naturalWidth || img.width;
+  const origH = img.naturalHeight || img.height;
+
+  const rotCanvas = document.createElement('canvas');
+  rotCanvas.width = origH;
+  rotCanvas.height = origW;
+  const ctx = rotCanvas.getContext('2d');
+  ctx.translate(rotCanvas.width / 2, rotCanvas.height / 2);
+  ctx.rotate((90 * Math.PI) / 180);
+  ctx.drawImage(img, -origW / 2, -origH / 2);
+
+  const rotatedImg = new Image();
+  rotatedImg.onload = () => {
+    state.renderer.setImage(rotatedImg);
+    fitCanvas(rotatedImg.naturalWidth, rotatedImg.naturalHeight);
+    presetThumbnailCache.clear();
+    thumbBaseCanvas = null;
+    renderPresets();
+    scheduleRender();
+    showToast('Image rotated 90°');
+  };
+  rotatedImg.src = rotCanvas.toDataURL('image/jpeg', 0.95);
 });
 
 // Mobile Bottom Sheet Controls

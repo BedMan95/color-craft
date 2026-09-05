@@ -26,6 +26,19 @@ export const DEFAULT_PARAMS = {
   maskExposure: 0,
   maskWarmth: 0,
   maskInvert: 0,
+  // Detail & Clarity
+  texture: 0,
+  clarity: 0,
+  dehaze: 0,
+  // Color Grading / Split Toning
+  splitShadowHue: 210,      // Default cool shadows (Teal/Blue)
+  splitShadowSat: 0,
+  splitHighlightHue: 40,    // Default warm highlights (Gold/Orange)
+  splitHighlightSat: 0,
+  splitBalance: 0,
+  // Meitu Beauty & Glow
+  skinSmooth: 0,
+  glow: 0,
   hsl: {
     red: { hue: 0, sat: 0, lum: 0 },
     orange: { hue: 0, sat: 0, lum: 0 },

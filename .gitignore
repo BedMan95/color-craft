@@ -37,3 +37,6 @@ Thumbs.db
 # Temporary debug screenshots/artifacts
 debug-*.png
 *.tmp
+
+# Todo and internal notes
+todo.txt

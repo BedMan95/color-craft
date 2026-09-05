@@ -105,6 +105,15 @@ export class WebGLRenderer {
       maskExposure: gl.getUniformLocation(p, 'u_maskExposure'),
       maskWarmth: gl.getUniformLocation(p, 'u_maskWarmth'),
       maskInvert: gl.getUniformLocation(p, 'u_maskInvert'),
+      clarity: gl.getUniformLocation(p, 'u_clarity'),
+      texture: gl.getUniformLocation(p, 'u_texture'),
+      dehaze: gl.getUniformLocation(p, 'u_dehaze'),
+      texelSize: gl.getUniformLocation(p, 'u_texelSize'),
+      shadowTint: gl.getUniformLocation(p, 'u_shadowTint'),
+      highlightTint: gl.getUniformLocation(p, 'u_highlightTint'),
+      splitBalance: gl.getUniformLocation(p, 'u_splitBalance'),
+      skinSmooth: gl.getUniformLocation(p, 'u_skinSmooth'),
+      glow: gl.getUniformLocation(p, 'u_glow'),
     };
   }
 
@@ -179,6 +188,33 @@ export class WebGLRenderer {
     gl.uniform1f(this.uniforms.maskExposure, params.maskExposure || 0);
     gl.uniform1f(this.uniforms.maskWarmth, params.maskWarmth || 0);
     gl.uniform1f(this.uniforms.maskInvert, params.maskInvert ? 1.0 : 0.0);
+
+    // Texture, Clarity & Dehaze
+    gl.uniform1f(this.uniforms.clarity, params.clarity || 0);
+    gl.uniform1f(this.uniforms.texture, params.texture || 0);
+    gl.uniform1f(this.uniforms.dehaze, params.dehaze || 0);
+    gl.uniform2f(this.uniforms.texelSize, 1.0 / (this.canvas.width || 1000), 1.0 / (this.canvas.height || 1000));
+
+    // Color Grading / Split Toning
+    const shHueRad = ((params.splitShadowHue || 0) * Math.PI) / 180;
+    const shSat = (params.splitShadowSat || 0) * 0.01;
+    const shR = (Math.cos(shHueRad) * 0.5 + 0.5) * shSat;
+    const shG = (Math.cos(shHueRad - 2.094) * 0.5 + 0.5) * shSat;
+    const shB = (Math.cos(shHueRad + 2.094) * 0.5 + 0.5) * shSat;
+    gl.uniform3f(this.uniforms.shadowTint, shR, shG, shB);
+
+    const hiHueRad = ((params.splitHighlightHue || 0) * Math.PI) / 180;
+    const hiSat = (params.splitHighlightSat || 0) * 0.01;
+    const hiR = (Math.cos(hiHueRad) * 0.5 + 0.5) * hiSat;
+    const hiG = (Math.cos(hiHueRad - 2.094) * 0.5 + 0.5) * hiSat;
+    const hiB = (Math.cos(hiHueRad + 2.094) * 0.5 + 0.5) * hiSat;
+    gl.uniform3f(this.uniforms.highlightTint, hiR, hiG, hiB);
+
+    gl.uniform1f(this.uniforms.splitBalance, params.splitBalance || 0);
+
+    // Meitu Skin Smoothing & Glow
+    gl.uniform1f(this.uniforms.skinSmooth, params.skinSmooth || 0);
+    gl.uniform1f(this.uniforms.glow, params.glow || 0);
 
     // HSL Bands: array of 7 vec3
     // red, orange, yellow, green, cyan, blue, magenta

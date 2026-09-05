@@ -49,6 +49,21 @@ uniform float u_maskExposure;  // -100 to 100
 uniform float u_maskWarmth;    // -100 to 100
 uniform float u_maskInvert;    // 0 or 1
 
+// Clarity, Texture & Dehaze
+uniform float u_clarity;       // -100 to 100
+uniform float u_texture;       // -100 to 100
+uniform float u_dehaze;        // -100 to 100
+uniform vec2 u_texelSize;      // 1.0 / canvas dimensions
+
+// Color Grading / Split Toning
+uniform vec3 u_shadowTint;     // rgb tint for shadows
+uniform vec3 u_highlightTint;  // rgb tint for highlights
+uniform float u_splitBalance;  // -100 to 100
+
+// Meitu Beauty: Skin Smooth & Dreamy Soft Glow
+uniform float u_skinSmooth;    // 0 to 100
+uniform float u_glow;          // 0 to 100
+
 // HSL Per-band adjustments: vec3(hueShift, satShift, lumShift)
 uniform vec3 u_hsl[7];
 
@@ -145,6 +160,48 @@ void main() {
   float cont = 1.0 + (u_contrast * 0.01);
   color = (color - 0.5) * cont + 0.5;
 
+  // 5b. Dehaze (Restore contrast and boost saturation in faded tones)
+  if (abs(u_dehaze) > 0.01) {
+    float dh = u_dehaze * 0.01;
+    color = (color - 0.15 * dh) / (1.0 - 0.15 * dh);
+    color += (color - 0.5) * (dh * 0.25);
+  }
+
+  // 5c. Texture & Clarity (Local micro-contrast via 4-tap neighborhood)
+  if (abs(u_texture) > 0.01 || abs(u_clarity) > 0.01 || u_skinSmooth > 0.0 || u_glow > 0.0) {
+    vec2 off = u_texelSize * 1.5;
+    vec3 n1 = texture(u_image, v_texCoord + vec2(off.x, 0.0)).rgb;
+    vec3 n2 = texture(u_image, v_texCoord - vec2(off.x, 0.0)).rgb;
+    vec3 n3 = texture(u_image, v_texCoord + vec2(0.0, off.y)).rgb;
+    vec3 n4 = texture(u_image, v_texCoord - vec2(0.0, off.y)).rgb;
+    vec3 blur = (n1 + n2 + n3 + n4) * 0.25;
+    vec3 highPass = original.rgb - blur;
+
+    // Texture (fine detail)
+    color += highPass * (u_texture * 0.015);
+
+    // Clarity (mid-frequency local contrast)
+    float midtoneMask = 1.0 - 2.0 * abs(lum - 0.5);
+    color += highPass * (u_clarity * 0.02) * max(0.0, midtoneMask);
+
+    // Meitu Skin Smoothing (preserve edges, blur flat skin areas)
+    if (u_skinSmooth > 0.0) {
+      // Skin detection in YCbCr / warm range: R > G > B
+      bool isSkin = (original.r > original.g) && (original.g > original.b) && (original.r - original.b > 0.08);
+      float edge = length(highPass);
+      float smoothFactor = (1.0 - smoothstep(0.04, 0.18, edge)) * (u_skinSmooth * 0.01);
+      if (isSkin) {
+        color = mix(color, blur, smoothFactor * 0.85);
+      }
+    }
+
+    // Meitu Dreamy Soft Glow / Bloom
+    if (u_glow > 0.0) {
+      vec3 brightBlur = max(vec3(0.0), blur - 0.35);
+      color = mix(color, color + brightBlur * 0.9, u_glow * 0.01);
+    }
+  }
+
   // IMPORTANT: Clamp color to [0..1] before HSL conversion.
   // When exposure > 0, un-clamped color > 1.0 causes:
   // delta / (2.0 - (cMax + cMin)) denominator to go <= 0 or negative,
@@ -177,6 +234,18 @@ void main() {
   hsl.y = clamp(hsl.y * sat, 0.0, 1.0);
 
   color = hsl2rgb(hsl);
+
+  // 7b. Color Grading / Split Toning (Shadows & Highlights color wheels)
+  if (length(u_shadowTint) > 0.001 || length(u_highlightTint) > 0.001) {
+    float splitLum = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    float bal = u_splitBalance * 0.005;
+    float shWeight = 1.0 - smoothstep(0.0, 0.5 + bal, splitLum);
+    float hiWeight = smoothstep(0.5 + bal, 1.0, splitLum);
+
+    color += u_shadowTint * shWeight * 0.35;
+    color += u_highlightTint * hiWeight * 0.35;
+    color = clamp(color, 0.0, 1.0);
+  }
 
   // 8. Vignette
   if (u_vignette > 0.0) {
