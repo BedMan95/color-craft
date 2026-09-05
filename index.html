@@ -51,6 +51,11 @@
           <span class="btn-label">Rotate</span>
         </button>
 
+        <button id="btn-crop-mode" class="btn btn-ghost btn-sm" title="Crop & Aspect Ratio (C)">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+          <span class="btn-label">Crop</span>
+        </button>
+
         <button id="btn-reset" class="btn btn-ghost btn-sm" title="Reset All">
           <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           <span class="btn-label">Reset</span>
@@ -88,6 +93,34 @@
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
           <span>Compare</span>
         </button>
+
+        <!-- Crop Tool Floating Toolbar Overlay -->
+        <div id="crop-overlay" class="crop-overlay hidden">
+          <div class="crop-bar">
+            <span class="crop-label">Aspect Ratio:</span>
+            <div class="crop-ratio-group">
+              <button class="btn-crop-ratio active" data-ratio="free">Free</button>
+              <button class="btn-crop-ratio" data-ratio="1:1">1:1</button>
+              <button class="btn-crop-ratio" data-ratio="4:5">4:5</button>
+              <button class="btn-crop-ratio" data-ratio="16:9">16:9</button>
+              <button class="btn-crop-ratio" data-ratio="9:16">9:16</button>
+            </div>
+            <div class="crop-actions">
+              <button id="btn-crop-cancel" class="btn btn-ghost btn-xs">Cancel</button>
+              <button id="btn-crop-apply" class="btn btn-primary btn-xs">Apply Crop</button>
+            </div>
+          </div>
+          <div id="crop-box" class="crop-box">
+            <div class="crop-grid-line h1"></div>
+            <div class="crop-grid-line h2"></div>
+            <div class="crop-grid-line v1"></div>
+            <div class="crop-grid-line v2"></div>
+            <div class="crop-handle nw"></div>
+            <div class="crop-handle ne"></div>
+            <div class="crop-handle sw"></div>
+            <div class="crop-handle se"></div>
+          </div>
+        </div>
       </section>
 
       <!-- Sidebar / Mobile Sheet Drawer (shadcn sheet) -->

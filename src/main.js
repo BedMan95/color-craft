@@ -721,6 +721,194 @@ window.addEventListener('pointerup', (e) => {
   }
 });
 
+// Crop Tool Logic
+const btnCropMode = document.getElementById('btn-crop-mode');
+const cropOverlay = document.getElementById('crop-overlay');
+const cropBox = document.getElementById('crop-box');
+const btnCropApply = document.getElementById('btn-crop-apply');
+const btnCropCancel = document.getElementById('btn-crop-cancel');
+const cropRatioBtns = document.querySelectorAll('.btn-crop-ratio');
+
+let isCropping = false;
+let activeCropRatio = 'free'; // 'free', '1:1', '4:5', '16:9', '9:16'
+let cropRect = { x: 0, y: 0, w: 0, h: 0 };
+let cropDragMode = null; // 'move', 'nw', 'ne', 'sw', 'se'
+let cropDragStart = { mouseX: 0, mouseY: 0, rect: null };
+
+function updateCropBoxDOM() {
+  if (!cropBox) return;
+  cropBox.style.left = `${cropRect.x}px`;
+  cropBox.style.top = `${cropRect.y}px`;
+  cropBox.style.width = `${cropRect.w}px`;
+  cropBox.style.height = `${cropRect.h}px`;
+}
+
+function initCropBox() {
+  const canvasRect = canvas.getBoundingClientRect();
+  const contRect = viewportContainer.getBoundingClientRect();
+  const cx = canvasRect.left - contRect.left;
+  const cy = canvasRect.top - contRect.top;
+  const cw = canvasRect.width;
+  const ch = canvasRect.height;
+
+  // default to 90% of current canvas
+  const insetX = cw * 0.05;
+  const insetY = ch * 0.05;
+  cropRect.x = cx + insetX;
+  cropRect.y = cy + insetY;
+  cropRect.w = cw - insetX * 2;
+  cropRect.h = ch - insetY * 2;
+  applyRatioToCropRect();
+  updateCropBoxDOM();
+}
+
+function applyRatioToCropRect() {
+  if (activeCropRatio === 'free') return;
+  let targetRatio = 1.0;
+  if (activeCropRatio === '1:1') targetRatio = 1.0;
+  else if (activeCropRatio === '4:5') targetRatio = 4 / 5;
+  else if (activeCropRatio === '16:9') targetRatio = 16 / 9;
+  else if (activeCropRatio === '9:16') targetRatio = 9 / 16;
+
+  cropRect.h = cropRect.w / targetRatio;
+}
+
+function openCropMode() {
+  if (!state.renderer.currentImage) return;
+  isCropping = true;
+  cropOverlay.classList.remove('hidden');
+  btnCropMode.classList.add('active');
+  initCropBox();
+}
+
+function closeCropMode() {
+  isCropping = false;
+  cropOverlay.classList.add('hidden');
+  btnCropMode.classList.remove('active');
+}
+
+btnCropMode?.addEventListener('click', () => {
+  if (isCropping) closeCropMode();
+  else openCropMode();
+});
+
+btnCropCancel?.addEventListener('click', closeCropMode);
+
+cropRatioBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    cropRatioBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCropRatio = btn.getAttribute('data-ratio');
+    applyRatioToCropRect();
+    updateCropBoxDOM();
+  });
+});
+
+// Crop pointer dragging
+cropBox?.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  const target = e.target;
+  if (target.classList.contains('nw')) cropDragMode = 'nw';
+  else if (target.classList.contains('ne')) cropDragMode = 'ne';
+  else if (target.classList.contains('sw')) cropDragMode = 'sw';
+  else if (target.classList.contains('se')) cropDragMode = 'se';
+  else cropDragMode = 'move';
+
+  cropDragStart.mouseX = e.clientX;
+  cropDragStart.mouseY = e.clientY;
+  cropDragStart.rect = { ...cropRect };
+  cropBox.setPointerCapture(e.pointerId);
+});
+
+cropBox?.addEventListener('pointermove', (e) => {
+  if (!cropDragMode) return;
+  const dx = e.clientX - cropDragStart.mouseX;
+  const dy = e.clientY - cropDragStart.mouseY;
+  const start = cropDragStart.rect;
+
+  if (cropDragMode === 'move') {
+    cropRect.x = start.x + dx;
+    cropRect.y = start.y + dy;
+  } else if (cropDragMode === 'se') {
+    cropRect.w = Math.max(40, start.w + dx);
+    cropRect.h = Math.max(40, start.h + dy);
+    applyRatioToCropRect();
+  } else if (cropDragMode === 'sw') {
+    const nextW = Math.max(40, start.w - dx);
+    cropRect.x = start.x + (start.w - nextW);
+    cropRect.w = nextW;
+    cropRect.h = Math.max(40, start.h + dy);
+    applyRatioToCropRect();
+  } else if (cropDragMode === 'ne') {
+    cropRect.w = Math.max(40, start.w + dx);
+    const nextH = Math.max(40, start.h - dy);
+    cropRect.y = start.y + (start.h - nextH);
+    cropRect.h = nextH;
+    applyRatioToCropRect();
+  } else if (cropDragMode === 'nw') {
+    const nextW = Math.max(40, start.w - dx);
+    const nextH = Math.max(40, start.h - dy);
+    cropRect.x = start.x + (start.w - nextW);
+    cropRect.y = start.y + (start.h - nextH);
+    cropRect.w = nextW;
+    cropRect.h = nextH;
+    applyRatioToCropRect();
+  }
+  updateCropBoxDOM();
+});
+
+cropBox?.addEventListener('pointerup', (e) => {
+  cropDragMode = null;
+  try {
+    if (cropBox.hasPointerCapture(e.pointerId)) {
+      cropBox.releasePointerCapture(e.pointerId);
+    }
+  } catch {}
+});
+
+// Apply Crop to Image
+btnCropApply?.addEventListener('click', () => {
+  if (!state.renderer.currentImage) return;
+  const img = state.renderer.currentImage;
+  const canvasRect = canvas.getBoundingClientRect();
+  const contRect = viewportContainer.getBoundingClientRect();
+  const cx = canvasRect.left - contRect.left;
+  const cy = canvasRect.top - contRect.top;
+
+  // Normalized relative coords on canvas
+  const relX = Math.max(0, Math.min(1, (cropRect.x - cx) / canvasRect.width));
+  const relY = Math.max(0, Math.min(1, (cropRect.y - cy) / canvasRect.height));
+  const relW = Math.max(0.01, Math.min(1 - relX, cropRect.w / canvasRect.width));
+  const relH = Math.max(0.01, Math.min(1 - relY, cropRect.h / canvasRect.height));
+
+  const origW = img.naturalWidth || img.width;
+  const origH = img.naturalHeight || img.height;
+  const sx = Math.round(relX * origW);
+  const sy = Math.round(relY * origH);
+  const sw = Math.round(relW * origW);
+  const sh = Math.round(relH * origH);
+
+  const croppedCanvas = document.createElement('canvas');
+  croppedCanvas.width = sw;
+  croppedCanvas.height = sh;
+  const ctx = croppedCanvas.getContext('2d');
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+
+  const croppedImg = new Image();
+  croppedImg.onload = () => {
+    state.renderer.setImage(croppedImg);
+    fitCanvas(croppedImg.naturalWidth, croppedImg.naturalHeight);
+    presetThumbnailCache.clear();
+    thumbBaseCanvas = null;
+    renderPresets();
+    scheduleRender();
+    closeCropMode();
+    showToast(`Cropped to ${sw} × ${sh}`);
+  };
+  croppedImg.src = croppedCanvas.toDataURL('image/jpeg', 0.95);
+});
+
 // Rotate 90 deg clockwise
 const btnRotate = document.getElementById('btn-rotate');
 btnRotate?.addEventListener('click', () => {

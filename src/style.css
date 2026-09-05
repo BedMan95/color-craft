@@ -366,6 +366,101 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Crop Tool Overlay */
+.crop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: auto;
+  user-select: none;
+  touch-action: none;
+}
+.crop-overlay.hidden {
+  display: none;
+}
+.crop-bar {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(18, 18, 22, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border));
+  padding: 6px 12px;
+  border-radius: 9999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  z-index: 35;
+}
+.crop-label {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+.crop-ratio-group {
+  display: flex;
+  gap: 4px;
+}
+.btn-crop-ratio {
+  background: transparent;
+  border: none;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-crop-ratio:hover {
+  color: hsl(var(--foreground));
+}
+.btn-crop-ratio.active {
+  background: hsl(var(--secondary));
+  color: hsl(var(--primary));
+  font-weight: 600;
+}
+.crop-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid hsl(var(--border));
+}
+.crop-box {
+  position: absolute;
+  border: 1px solid #ffffff;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
+  cursor: move;
+  pointer-events: auto;
+}
+.crop-grid-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+.crop-grid-line.h1 { top: 33.333%; left: 0; right: 0; height: 1px; }
+.crop-grid-line.h2 { top: 66.666%; left: 0; right: 0; height: 1px; }
+.crop-grid-line.v1 { left: 33.333%; top: 0; bottom: 0; width: 1px; }
+.crop-grid-line.v2 { left: 66.666%; top: 0; bottom: 0; width: 1px; }
+
+.crop-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 2px;
+}
+.crop-handle.nw { top: -7px; left: -7px; cursor: nwse-resize; }
+.crop-handle.ne { top: -7px; right: -7px; cursor: nesw-resize; }
+.crop-handle.sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+.crop-handle.se { bottom: -7px; right: -7px; cursor: nwse-resize; }
+
 /* Sidebar / Bottom Sheet (Desktop: right sidebar, Mobile: bottom sheet) */
 .sidebar-sheet {
   width: var(--sidebar-w);
