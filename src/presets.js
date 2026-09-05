@@ -264,6 +264,173 @@ export const BUILTIN_PRESETS = [
         blue: { hue: 0, sat: -25, lum: -5 },
       }
     }
+  },
+  {
+    id: 'fuji-classic-chrome',
+    name: 'Fuji Classic Chrome',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: 2,
+      contrast: 18,
+      highlights: -15,
+      shadows: -10,
+      whites: 10,
+      blacks: 12,
+      temp: -4,
+      tint: 6,
+      vibrance: -8,
+      saturation: -20,
+      clarity: 15,
+      texture: 10,
+      grain: 18,
+      splitShadowHue: 200,
+      splitShadowSat: 12,
+      splitHighlightHue: 45,
+      splitHighlightSat: 8,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        red: { hue: -5, sat: -10, lum: 0 },
+        blue: { hue: -10, sat: -30, lum: -10 },
+        green: { hue: -12, sat: -40, lum: -15 },
+        cyan: { hue: 5, sat: -20, lum: 5 },
+      }
+    }
+  },
+  {
+    id: 'meitu-korean-glow',
+    name: 'Meitu Korean Glow',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: 14,
+      contrast: -12,
+      highlights: -25,
+      shadows: 30,
+      whites: 16,
+      blacks: 15,
+      temp: 6,
+      tint: 10, // pastel rosy tone
+      vibrance: 12,
+      saturation: -6,
+      skinSmooth: 65,
+      glow: 45,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        red: { hue: 2, sat: 15, lum: 12 },
+        orange: { hue: 0, sat: 18, lum: 24 }, // fair illuminated skin
+        magenta: { hue: 5, sat: 20, lum: 10 },
+      }
+    }
+  },
+  {
+    id: 'kodak-tri-x-400',
+    name: 'Kodak Tri-X 400',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: 4,
+      contrast: 42,
+      highlights: 15,
+      shadows: -20,
+      whites: 26,
+      blacks: -35,
+      vibrance: -100,
+      saturation: -100,
+      clarity: 25,
+      texture: 20,
+      grain: 45,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        orange: { hue: 0, sat: 0, lum: 12 },
+        blue: { hue: 0, sat: 0, lum: -25 },
+      }
+    }
+  },
+  {
+    id: 'nordic-cold-moody',
+    name: 'Nordic Cold Moody',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: -6,
+      contrast: 20,
+      highlights: -40,
+      shadows: 14,
+      whites: -10,
+      blacks: 10,
+      temp: -24,
+      tint: -6,
+      vibrance: 8,
+      saturation: -30,
+      dehaze: 15,
+      splitShadowHue: 215,
+      splitShadowSat: 25,
+      splitHighlightHue: 50,
+      splitHighlightSat: 10,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        green: { hue: 15, sat: -45, lum: -20 },
+        cyan: { hue: -10, sat: 20, lum: 5 },
+        blue: { hue: -5, sat: 15, lum: -10 },
+      }
+    }
+  },
+  {
+    id: 'tokyo-night-cyber',
+    name: 'Tokyo Night Street',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: -2,
+      contrast: 32,
+      highlights: 25,
+      shadows: -15,
+      whites: 20,
+      blacks: -25,
+      temp: -18,
+      tint: 20,
+      vibrance: 35,
+      saturation: 10,
+      clarity: 22,
+      texture: 18,
+      splitShadowHue: 230,
+      splitShadowSat: 30,
+      splitHighlightHue: 330, // neon pink highlight
+      splitHighlightSat: 22,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        cyan: { hue: 10, sat: 50, lum: 15 },
+        magenta: { hue: 8, sat: 55, lum: 20 },
+        yellow: { hue: -10, sat: 40, lum: 10 },
+        blue: { hue: -12, sat: 35, lum: 8 },
+      }
+    }
+  },
+  {
+    id: 'vintage-polaroid-600',
+    name: 'Vintage Polaroid 600',
+    params: {
+      ...DEFAULT_PARAMS,
+      exposure: 8,
+      contrast: -18,
+      highlights: -22,
+      shadows: 26,
+      whites: -14,
+      blacks: 36, // lifted milky shadows
+      temp: 16,
+      tint: -12, // pale retro greenish-yellow cast
+      vibrance: -10,
+      saturation: -15,
+      vignette: 28,
+      grain: 32,
+      glow: 30,
+      splitShadowHue: 90,
+      splitShadowSat: 16,
+      splitHighlightHue: 40,
+      splitHighlightSat: 18,
+      hsl: {
+        ...DEFAULT_PARAMS.hsl,
+        orange: { hue: 5, sat: 12, lum: 8 },
+        yellow: { hue: 10, sat: -20, lum: 5 },
+        blue: { hue: 12, sat: -35, lum: 4 },
+      }
+    }
   }
 ];
 
