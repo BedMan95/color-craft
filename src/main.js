@@ -161,9 +161,111 @@ let lastTime = performance.now();
 let frames = 0;
 let fpsTimer = 0;
 
+// Realtime Histogram Calculator & Renderer
+const histCanvas = document.getElementById('histogram-canvas');
+const histCtx = histCanvas?.getContext('2d');
+const histShadowClip = document.getElementById('hist-shadow-clip');
+const histHighlightClip = document.getElementById('hist-highlight-clip');
+
+let histSampleCanvas = null;
+let histSampleCtx = null;
+let histAnimFrame = null;
+
+function updateHistogram() {
+  if (!histCtx || !canvas || canvas.width === 0) return;
+
+  // Downsample to 128x128 for 60fps fast readback without GPU stall
+  if (!histSampleCanvas) {
+    histSampleCanvas = document.createElement('canvas');
+    histSampleCanvas.width = 128;
+    histSampleCanvas.height = 128;
+    histSampleCtx = histSampleCanvas.getContext('2d', { willReadFrequently: true });
+  }
+
+  try {
+    histSampleCtx.drawImage(canvas, 0, 0, 128, 128);
+    const imgData = histSampleCtx.getImageData(0, 0, 128, 128).data;
+
+    const rBins = new Uint32Array(256);
+    const gBins = new Uint32Array(256);
+    const bBins = new Uint32Array(256);
+    const lumaBins = new Uint32Array(256);
+
+    let shadowClipCount = 0;
+    let highlightClipCount = 0;
+    const totalPixels = 128 * 128;
+
+    for (let i = 0; i < imgData.length; i += 4) {
+      const r = imgData[i];
+      const g = imgData[i + 1];
+      const b = imgData[i + 2];
+      const lum = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+      rBins[r]++;
+      gBins[g]++;
+      bBins[b]++;
+      lumaBins[lum]++;
+
+      if (r <= 2 && g <= 2 && b <= 2) shadowClipCount++;
+      if (r >= 253 && g >= 253 && b >= 253) highlightClipCount++;
+    }
+
+    // Shadow & Highlight clipping indicators
+    if (histShadowClip) {
+      histShadowClip.classList.toggle('active', shadowClipCount > totalPixels * 0.01);
+    }
+    if (histHighlightClip) {
+      histHighlightClip.classList.toggle('active', highlightClipCount > totalPixels * 0.01);
+    }
+
+    // Find peak max (exclude extreme endpoints 0 and 255 from peak scaling)
+    let maxCount = 1;
+    for (let i = 2; i < 254; i++) {
+      if (rBins[i] > maxCount) maxCount = rBins[i];
+      if (gBins[i] > maxCount) maxCount = gBins[i];
+      if (bBins[i] > maxCount) maxCount = bBins[i];
+      if (lumaBins[i] > maxCount) maxCount = lumaBins[i];
+    }
+
+    const w = histCanvas.width;
+    const h = histCanvas.height;
+    histCtx.clearRect(0, 0, w, h);
+
+    // Draw channels with screen blending
+    histCtx.save();
+    histCtx.globalCompositeOperation = 'screen';
+
+    const drawChannel = (bins, color) => {
+      histCtx.fillStyle = color;
+      histCtx.beginPath();
+      histCtx.moveTo(0, h);
+      for (let i = 0; i < 256; i++) {
+        const x = (i / 255) * w;
+        const barH = Math.min(h, (bins[i] / maxCount) * (h * 0.9));
+        histCtx.lineTo(x, h - barH);
+      }
+      histCtx.lineTo(w, h);
+      histCtx.closePath();
+      histCtx.fill();
+    };
+
+    drawChannel(rBins, 'rgba(239, 68, 68, 0.45)');
+    drawChannel(gBins, 'rgba(34, 197, 94, 0.45)');
+    drawChannel(bBins, 'rgba(59, 130, 246, 0.45)');
+    drawChannel(lumaBins, 'rgba(240, 240, 245, 0.3)');
+
+    histCtx.restore();
+  } catch (err) {
+    // fallback if context is detached
+  }
+}
+
 function scheduleRender() {
   const now = performance.now();
   state.renderer.render(state.params);
+
+  if (histAnimFrame) cancelAnimationFrame(histAnimFrame);
+  histAnimFrame = requestAnimationFrame(updateHistogram);
 
   frames++;
   const dt = now - lastTime;

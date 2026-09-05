@@ -570,6 +570,64 @@ body {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--muted-foreground) / 0.5) transparent;
 }
+
+/* Realtime Interactive Histogram Card */
+.histogram-card {
+  background: rgba(12, 12, 16, 0.85);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(8px);
+}
+.histogram-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.histogram-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+}
+.histogram-indicators {
+  display: flex;
+  gap: 4px;
+}
+.clip-badge {
+  font-size: 9px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: hsl(var(--secondary));
+  color: hsl(var(--muted-foreground));
+  transition: all 0.15s ease;
+}
+.clip-badge.shadow.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.6);
+}
+.clip-badge.highlight.active {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+.histogram-display {
+  width: 100%;
+  height: 68px;
+  display: block;
+  background: #08080a;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
 .sheet-scroll::-webkit-scrollbar {
   width: 8px;
 }

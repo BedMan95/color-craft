@@ -142,6 +142,18 @@
 
         <!-- Parameter Tabs & Sliders -->
         <div class="sheet-scroll">
+          <!-- Realtime Interactive Histogram -->
+          <div class="histogram-card">
+            <div class="histogram-header">
+              <span class="histogram-title">Histogram</span>
+              <div class="histogram-indicators">
+                <span id="hist-shadow-clip" class="clip-badge shadow" title="Shadows clipped">S</span>
+                <span id="hist-highlight-clip" class="clip-badge highlight" title="Highlights clipped">H</span>
+              </div>
+            </div>
+            <canvas id="histogram-canvas" width="256" height="80" class="histogram-display"></canvas>
+          </div>
+
           <!-- White Balance -->
           <div class="accordion-item">
             <div class="accordion-trigger">
