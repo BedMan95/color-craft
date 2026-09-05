@@ -1059,6 +1059,10 @@ body {
     align-items: center;
     padding-top: 0;
     padding-bottom: 0;
+    transition: padding-bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .viewport-area.dragging {
+    transition: none !important;
   }
 
   /* Meitu Persistent Filter Shelf above bottom bar */
