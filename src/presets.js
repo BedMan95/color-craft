@@ -39,6 +39,7 @@ export const DEFAULT_PARAMS = {
   // Meitu Beauty & Glow
   skinSmooth: 0,
   glow: 0,
+  skinTone: 0,
   // Portrait Bokeh Depth Blur
   bokehBlur: 0,
   bokehRadius: 45,

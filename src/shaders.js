@@ -63,6 +63,7 @@ uniform float u_splitBalance;  // -100 to 100
 // Meitu Beauty: Skin Smooth & Dreamy Soft Glow
 uniform float u_skinSmooth;    // 0 to 100
 uniform float u_glow;          // 0 to 100
+uniform float u_skinTone;       // -100 to 100 (Porcelain / Cool to Warm / Tan / Rosy)
 
 // Portrait Bokeh Depth Blur (Lens simulation)
 uniform float u_bokehBlur;     // 0 to 100
@@ -192,14 +193,28 @@ void main() {
     float midtoneMask = 1.0 - 2.0 * abs(lum - 0.5);
     color += highPass * (u_clarity * 0.02) * max(0.0, midtoneMask);
 
-    // Meitu Skin Smoothing (preserve edges, blur flat skin areas)
-    if (u_skinSmooth > 0.0) {
-      // Skin detection in YCbCr / warm range: R > G > B
-      bool isSkin = (original.r > original.g) && (original.g > original.b) && (original.r - original.b > 0.08);
+    // Meitu Skin Smoothing & Skin Tone Tuning
+    bool isSkin = (original.r > original.g) && (original.g > original.b) && (original.r - original.b > 0.08);
+    if (u_skinSmooth > 0.0 && isSkin) {
       float edge = length(highPass);
       float smoothFactor = (1.0 - smoothstep(0.04, 0.18, edge)) * (u_skinSmooth * 0.01);
-      if (isSkin) {
-        color = mix(color, blur, smoothFactor * 0.85);
+      color = mix(color, blur, smoothFactor * 0.85);
+    }
+
+    // Skin Tone Shift (-100: Porcelain Bright/Fair, +100: Warm Tan/Golden)
+    if (abs(u_skinTone) > 0.1 && isSkin) {
+      if (u_skinTone < 0.0) {
+        // Porcelain: subtle brighten + pink/cool lift
+        float t = abs(u_skinTone) * 0.01;
+        color.r = mix(color.r, color.r * 1.08 + 0.03, t);
+        color.g = mix(color.g, color.g * 1.05 + 0.02, t);
+        color.b = mix(color.b, color.b * 1.09 + 0.04, t);
+      } else {
+        // Warm Tan / Golden
+        float t = u_skinTone * 0.01;
+        color.r = mix(color.r, color.r * 1.06 + 0.04, t);
+        color.g = mix(color.g, color.g * 0.98 + 0.02, t);
+        color.b = mix(color.b, color.b * 0.85, t);
       }
     }
 

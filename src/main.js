@@ -354,7 +354,7 @@ const SLIDERS = [
   'maskExposure', 'maskWarmth', 'maskAngle', 'maskPosition', 'maskFeather',
   'texture', 'clarity', 'dehaze',
   'splitShadowHue', 'splitShadowSat', 'splitHighlightHue', 'splitHighlightSat', 'splitBalance',
-  'skinSmooth', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
+  'skinSmooth', 'skinTone', 'glow', 'bokehBlur', 'bokehRadius', 'bokehX', 'bokehY',
   'curveBlacks', 'curveShadows', 'curveHighlights', 'curveWhites',
   'vignette', 'grain'
 ];
@@ -500,6 +500,7 @@ document.querySelectorAll('.btn-reset-sec').forEach(btn => {
       state.params.splitBalance = 0;
     } else if (target === 'beauty') {
       state.params.skinSmooth = 0;
+      state.params.skinTone = 0;
       state.params.glow = 0;
       state.params.bokehBlur = 0;
       state.params.bokehRadius = 45;
