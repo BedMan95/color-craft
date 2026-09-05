@@ -293,6 +293,36 @@ body {
   z-index: 10;
 }
 
+/* Meitu Floating Compare Button */
+.meitu-compare-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 20, 24, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 22;
+  user-select: none;
+  touch-action: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+}
+.meitu-compare-btn:active, .meitu-compare-btn.active {
+  background: hsl(var(--primary));
+  transform: scale(0.96);
+  border-color: transparent;
+}
+
 /* Split Handle */
 .split-handle {
   position: absolute;

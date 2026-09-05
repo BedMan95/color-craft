@@ -77,6 +77,12 @@
           <span id="meta-res">-- × --</span>
           <span id="meta-fps" class="text-muted-foreground">-- fps</span>
         </div>
+
+        <!-- Meitu-style Hold to Compare Floating Button -->
+        <button id="btn-hold-compare" class="meitu-compare-btn" title="Hold to see Original">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+          <span>Compare</span>
+        </button>
       </section>
 
       <!-- Sidebar / Mobile Sheet Drawer (shadcn sheet) -->
@@ -299,16 +305,21 @@
       </aside>
     </main>
 
-    <!-- Mobile Bottom Navigation Bar (shadcn mobile bar) -->
+    <!-- Mobile Bottom Navigation Bar (Meitu style bottom dock) -->
     <nav class="mobile-bottom-bar md-hide">
       <button id="btn-bottom-presets" class="bottom-nav-item">
-        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-        <span>Presets</span>
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/></svg>
+        <span>Filters</span>
       </button>
 
       <button id="btn-bottom-adjust" class="bottom-nav-item active">
-        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><line x1="12" x2="20" y1="12" y2="12"/><line x1="4" x2="8" y1="12" y2="12"/><circle cx="10" cy="12" r="2"/></svg>
-        <span>Tune</span>
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><path d="M9 12h6"/></svg>
+        <span>Edit</span>
+      </button>
+
+      <button id="btn-bottom-hsl" class="bottom-nav-item">
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10c0 5.5-4.5 10-10 10"/></svg>
+        <span>HSL Color</span>
       </button>
 
       <button id="btn-bottom-split" class="bottom-nav-item">
@@ -317,8 +328,8 @@
       </button>
 
       <button id="btn-bottom-export" class="bottom-nav-item text-primary font-medium">
-        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span>Export</span>
+        <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+        <span>Save</span>
       </button>
     </nav>
 

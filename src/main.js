@@ -494,18 +494,31 @@ window.addEventListener('pointerup', (e) => {
 });
 
 // Mobile Bottom Sheet Controls
+const btnBottomHsl = document.getElementById('btn-bottom-hsl');
+const btnHoldCompare = document.getElementById('btn-hold-compare');
+
 function openSheet(focusSection = null) {
   sidebar.classList.add('open');
   sheetBackdrop.classList.add('active');
   state.isSheetOpen = true;
 
+  btnBottomPresets?.classList.remove('active');
+  btnBottomAdjust?.classList.remove('active');
+  btnBottomHsl?.classList.remove('active');
+
+  const sheetScrollEl = sidebar.querySelector('.sheet-scroll');
+  const presetSec = sidebar.querySelector('.sheet-section');
+
   if (focusSection === 'presets') {
     btnBottomPresets?.classList.add('active');
-    btnBottomAdjust?.classList.remove('active');
-    sidebar.scrollTop = 0;
+    presetSec?.scrollIntoView({ behavior: 'smooth' });
+  } else if (focusSection === 'hsl') {
+    btnBottomHsl?.classList.add('active');
+    const hslSec = document.querySelector('.tab-trigger')?.closest('.accordion-item');
+    if (hslSec) hslSec.scrollIntoView({ behavior: 'smooth' });
   } else {
     btnBottomAdjust?.classList.add('active');
-    btnBottomPresets?.classList.remove('active');
+    if (sheetScrollEl) sheetScrollEl.scrollTop = 0;
   }
 }
 
@@ -517,6 +530,7 @@ function closeSheet() {
   state.isSheetOpen = false;
   btnBottomAdjust?.classList.remove('active');
   btnBottomPresets?.classList.remove('active');
+  btnBottomHsl?.classList.remove('active');
 }
 
 btnBottomAdjust?.addEventListener('click', () => {
@@ -534,6 +548,33 @@ btnBottomPresets?.addEventListener('click', () => {
     openSheet('presets');
   }
 });
+
+btnBottomHsl?.addEventListener('click', () => {
+  if (state.isSheetOpen && btnBottomHsl.classList.contains('active')) {
+    closeSheet();
+  } else {
+    openSheet('hsl');
+  }
+});
+
+// Meitu-style Hold to Compare (Original Preview)
+if (btnHoldCompare) {
+  const startCompare = (e) => {
+    e.preventDefault();
+    btnHoldCompare.classList.add('active');
+    state.renderer.render(DEFAULT_PARAMS);
+  };
+  const endCompare = (e) => {
+    e.preventDefault();
+    btnHoldCompare.classList.remove('active');
+    scheduleRender();
+  };
+
+  btnHoldCompare.addEventListener('pointerdown', startCompare);
+  btnHoldCompare.addEventListener('pointerup', endCompare);
+  btnHoldCompare.addEventListener('pointerleave', endCompare);
+  btnHoldCompare.addEventListener('pointercancel', endCompare);
+}
 
 btnCloseSheet?.addEventListener('click', closeSheet);
 sheetBackdrop?.addEventListener('click', closeSheet);
